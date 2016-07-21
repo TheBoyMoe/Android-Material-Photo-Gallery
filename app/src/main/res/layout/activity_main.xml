@@ -48,6 +48,15 @@
         </android.support.design.widget.AppBarLayout>
 
 
+        <!-- toolbar shadow  -->
+        <!--<View-->
+            <!--android:id="@+id/toolbar_shadow"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="1dp"-->
+            <!--app:layout_anchor="@id/appbar"-->
+            <!--app:layout_anchorGravity="bottom"-->
+            <!--android:background="@drawable/shadow" />-->
+
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/fab"
             android:layout_gravity="bottom|end"

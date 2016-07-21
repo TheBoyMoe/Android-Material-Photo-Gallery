@@ -7,6 +7,7 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -30,6 +31,7 @@ import timber.log.Timber;
 /**
  *  References:
  *  [[1] https://guides.codepath.com/android/Fragment-Navigation-Drawer
+ *  [2] http://stackoverflow.com/questions/13472258/handling-actionbar-title-with-the-fragment-back-stack
  */
 public class MainActivity extends AppCompatActivity implements
         HomeFragment.Contract,
@@ -93,6 +95,39 @@ public class MainActivity extends AppCompatActivity implements
         outState.putString(CURRENT_PAGE_TITLE, mCurrentTitle);
     }
 
+    @Override
+    public void onBackPressed() {
+        // update the page title
+        FragmentManager fm = getSupportFragmentManager();
+        int count = fm.getBackStackEntryCount();
+        if (count <= 1) {
+            finish();
+        } else{
+            mCurrentTitle = fm.getBackStackEntryAt(count - 2).getName();
+        }
+        super.onBackPressed();
+        setTitle(mCurrentTitle);
+
+        // update nav drawer selection
+        switch (mCurrentTitle) {
+            case "Photo Gallery":
+                mNavigationView.setCheckedItem(R.id.drawer_home);
+                break;
+            case "Favourites":
+                mNavigationView.setCheckedItem(R.id.drawer_favourite);
+                break;
+            case "Map":
+                mNavigationView.setCheckedItem(R.id.drawer_map);
+                break;
+            case "Settings":
+                mNavigationView.setCheckedItem(R.id.drawer_settings);
+                break;
+            case "About":
+                mNavigationView.setCheckedItem(R.id.drawer_about);
+                break;
+        }
+    }
+
     private void setupDrawerLayout() {
         mDrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         mNavigationView = (NavigationView) findViewById(R.id.navigation_view);
@@ -121,11 +156,9 @@ public class MainActivity extends AppCompatActivity implements
                 break;
             case R.id.drawer_settings:
                 fragmentClass = SettingsFragment.class;
-                Utils.showSnackbar(mLayout, "Fragment not implemented");
                 break;
             case R.id.drawer_about:
                 fragmentClass = AboutFragment.class;
-                Utils.showSnackbar(mLayout, "Fragment not implemented");
                 break;
             default:
                 fragmentClass = HomeFragment.class;
@@ -136,12 +169,6 @@ public class MainActivity extends AppCompatActivity implements
             Timber.e("%s: Could not instantiate %s fragment, %s",
                     Constants.LOG_TAG, fragmentClass.getName(), e.getMessage());
         }
-
-        // replacing the existing fragment
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fragment_container, fragment)
-                //.addToBackStack(null)
-                .commit();
 
         // highlight the selected item and update page title
         item.setChecked(true);
@@ -164,6 +191,13 @@ public class MainActivity extends AppCompatActivity implements
             default:
                 mCurrentTitle = getString(R.string.menu_title_home);
         }
+
+        // replacing the existing fragment
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fragment_container, fragment)
+                .addToBackStack(mCurrentTitle)
+                .commit();
+
         setTitle(mCurrentTitle);
         mDrawer.closeDrawers();
     }
@@ -189,7 +223,7 @@ public class MainActivity extends AppCompatActivity implements
                 actionbar.setHomeAsUpIndicator(R.drawable.ic_drawer);
                 actionbar.setDisplayHomeAsUpEnabled(true);
 
-                // hide app title
+                // hide app title to custom text view
 //                actionbar.setDisplayShowTitleEnabled(false);
                 // enable custom view
 //                actionbar.setDisplayShowCustomEnabled(true);
@@ -200,15 +234,22 @@ public class MainActivity extends AppCompatActivity implements
 //                actionbar.setCustomView(pageTitle);
             }
 
+            // hide the toolbar shadow on devices API 21+
+            // View toolbarShadow = findViewById(R.id.toolbar_shadow);
+            //if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            //    toolbarShadow.setVisibility(View.GONE);
+            //}
         }
     }
 
     private void displayInitialFragment() {
-        getSupportFragmentManager().beginTransaction()
-                .add(R.id.fragment_container, HomeFragment.newInstance())
-                .commit();
         mCurrentTitle = getString(R.string.menu_title_home);
         setTitle(mCurrentTitle);
+
+        getSupportFragmentManager().beginTransaction()
+                .add(R.id.fragment_container, HomeFragment.newInstance())
+                .addToBackStack(mCurrentTitle)
+                .commit();
     }
 
 }
