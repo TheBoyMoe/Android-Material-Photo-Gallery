@@ -6,34 +6,46 @@ import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.TextView;
 
 import com.example.materialphotogallery.R;
+import com.example.materialphotogallery.common.Constants;
 import com.example.materialphotogallery.common.Utils;
+import com.example.materialphotogallery.ui.fragment.AboutFragment;
+import com.example.materialphotogallery.ui.fragment.FavouriteFragment;
 import com.example.materialphotogallery.ui.fragment.HomeFragment;
+import com.example.materialphotogallery.ui.fragment.PhotoMapFragment;
+import com.example.materialphotogallery.ui.fragment.SettingsFragment;
+
+import timber.log.Timber;
+
 /**
  *  References:
  *  [[1] https://guides.codepath.com/android/Fragment-Navigation-Drawer
  */
-public class MainActivity extends AppCompatActivity implements HomeFragment.Contract{
+public class MainActivity extends AppCompatActivity implements
+        HomeFragment.Contract,
+        FavouriteFragment.Contract,
+        PhotoMapFragment.Contract{
 
     public static void launch(Activity activity) {
         Intent intent = new Intent(activity, MainActivity.class);
         activity.startActivity(intent);
     }
 
+    private static final String CURRENT_PAGE_TITLE = "current_page_title";
     private CoordinatorLayout mLayout;
     private DrawerLayout mDrawer;
     private NavigationView mNavigationView;
+    private String mCurrentTitle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,14 +57,14 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.Cont
         initFab();
         setupDrawerLayout();
 
-        HomeFragment fragment = (HomeFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_container);
-        if (fragment == null) {
-            fragment = HomeFragment.newInstance();
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.fragment_container, fragment)
-                    .commit();
+        // set the initial fragment & title on startup
+        if (savedInstanceState == null) {
+            displayInitialFragment();
+        } else {
+            // else restore the page title
+            mCurrentTitle = savedInstanceState.getString(CURRENT_PAGE_TITLE);
+            setTitle(mCurrentTitle);
         }
-
     }
 
 
@@ -75,20 +87,85 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.Cont
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString(CURRENT_PAGE_TITLE, mCurrentTitle);
+    }
+
     private void setupDrawerLayout() {
         mDrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         mNavigationView = (NavigationView) findViewById(R.id.navigation_view);
         mNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(MenuItem item) {
-                // handle clicking on individual nav items via switch()
-                Utils.showSnackbar(mLayout, "Clicked " + item.getTitle());
-
-                item.setChecked(true);
-                mDrawer.closeDrawers();
+                selectDrawerItem(item);
                 return true;
             }
         });
+    }
+
+    private void selectDrawerItem(MenuItem item) {
+        // select the fragment to instantiate based on the item clicked
+        Fragment fragment = null;
+        Class fragmentClass;
+        switch (item.getItemId()) {
+            case R.id.drawer_home:
+                fragmentClass = HomeFragment.class;
+                break;
+            case R.id.drawer_favourite:
+                fragmentClass = FavouriteFragment.class;
+                break;
+            case R.id.drawer_map:
+                fragmentClass = PhotoMapFragment.class;
+                break;
+            case R.id.drawer_settings:
+                fragmentClass = SettingsFragment.class;
+                Utils.showSnackbar(mLayout, "Fragment not implemented");
+                break;
+            case R.id.drawer_about:
+                fragmentClass = AboutFragment.class;
+                Utils.showSnackbar(mLayout, "Fragment not implemented");
+                break;
+            default:
+                fragmentClass = HomeFragment.class;
+        }
+        try {
+            fragment = (Fragment) fragmentClass.newInstance();
+        } catch (Exception e) {
+            Timber.e("%s: Could not instantiate %s fragment, %s",
+                    Constants.LOG_TAG, fragmentClass.getName(), e.getMessage());
+        }
+
+        // replacing the existing fragment
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fragment_container, fragment)
+                //.addToBackStack(null)
+                .commit();
+
+        // highlight the selected item and update page title
+        item.setChecked(true);
+        switch (item.getTitle().toString()) {
+            case "Photo Gallery":
+                mCurrentTitle = getString(R.string.menu_title_home);
+                break;
+            case "Favourites":
+                mCurrentTitle = getString(R.string.menu_title_favourite);
+                break;
+            case "Map":
+                mCurrentTitle = getString(R.string.menu_title_map);
+                break;
+            case "Settings":
+                mCurrentTitle = getString(R.string.menu_title_settings);
+                break;
+            case "About":
+                mCurrentTitle = getString(R.string.menu_title_about);
+                break;
+            default:
+                mCurrentTitle = getString(R.string.menu_title_home);
+        }
+        setTitle(mCurrentTitle);
+        mDrawer.closeDrawers();
     }
 
     private void initFab() {
@@ -113,20 +190,25 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.Cont
                 actionbar.setDisplayHomeAsUpEnabled(true);
 
                 // hide app title
-                actionbar.setDisplayShowTitleEnabled(false);
+//                actionbar.setDisplayShowTitleEnabled(false);
                 // enable custom view
-                actionbar.setDisplayShowCustomEnabled(true);
+//                actionbar.setDisplayShowCustomEnabled(true);
                 // instantiate & show title depending on fragment loaded
-                LayoutInflater inflater = LayoutInflater.from(this);
-                View pageTitle = inflater.inflate(R.layout.current_view_title, null);
-                ((TextView)pageTitle.findViewById(R.id.action_bar_title)).setText("custom page title");
-                actionbar.setCustomView(pageTitle);
+//                LayoutInflater inflater = LayoutInflater.from(this);
+//                View pageTitle = inflater.inflate(R.layout.current_view_title, null);
+//                ((TextView)pageTitle.findViewById(R.id.action_bar_title)).setText(mCurrentTitle);
+//                actionbar.setCustomView(pageTitle);
             }
+
         }
-
-
     }
 
-
+    private void displayInitialFragment() {
+        getSupportFragmentManager().beginTransaction()
+                .add(R.id.fragment_container, HomeFragment.newInstance())
+                .commit();
+        mCurrentTitle = getString(R.string.menu_title_home);
+        setTitle(mCurrentTitle);
+    }
 
 }

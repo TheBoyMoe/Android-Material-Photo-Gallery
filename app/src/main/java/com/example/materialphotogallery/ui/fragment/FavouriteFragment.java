@@ -1,5 +1,6 @@
 package com.example.materialphotogallery.ui.fragment;
 
+
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -10,27 +11,25 @@ import android.widget.TextView;
 import com.example.materialphotogallery.R;
 import com.example.materialphotogallery.common.ContractFragment;
 
-
-public class HomeFragment extends ContractFragment<HomeFragment.Contract>{
+public class FavouriteFragment extends ContractFragment<FavouriteFragment.Contract>{
 
     public interface Contract {
         // TODO
     }
 
-    public HomeFragment() {}
+    public FavouriteFragment(){}
 
-    public static HomeFragment newInstance() {
-        return new HomeFragment();
+    public static FavouriteFragment newInstance() {
+        return new FavouriteFragment();
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.content_main, container, false);
-        TextView dummyContent = (TextView) view.findViewById(R.id.dummy_content);
-        dummyContent.setText(R.string.dummy_text);
+        View view = inflater.inflate(R.layout.content_placeholder, container, false);
+        TextView tv = (TextView) view.findViewById(R.id.text_placeholder);
+        tv.setText(String.format("%s fragment", getString(R.string.menu_title_favourite)));
 
         return view;
     }
-
 }

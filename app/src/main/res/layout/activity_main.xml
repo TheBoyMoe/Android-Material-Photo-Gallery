@@ -24,21 +24,6 @@
             android:layout_height="match_parent"/>
 
 
-        <!--<android.support.v4.widget.NestedScrollView-->
-            <!--app:layout_behavior="@string/appbar_scrolling_view_behavior"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="match_parent">-->
-
-            <!--<TextView-->
-                <!--android:padding="@dimen/normal"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="match_parent"-->
-                <!--android:textSize="32sp"-->
-                <!--android:text="@string/dummy_text"/>-->
-
-        <!--</android.support.v4.widget.NestedScrollView>-->
-
-
         <!--<com.antonioleiva.materializeyourapp.widgets.GridRecyclerView-->
             <!--android:id="@+id/recycler"-->
             <!--android:layout_width="match_parent"-->
@@ -61,6 +46,7 @@
                 app:layout_scrollFlags="scroll|enterAlways|snap" />
 
         </android.support.design.widget.AppBarLayout>
+
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/fab"
