@@ -30,8 +30,9 @@ import timber.log.Timber;
 
 /**
  *  References:
- *  [[1] https://guides.codepath.com/android/Fragment-Navigation-Drawer
+ *  [1] https://guides.codepath.com/android/Fragment-Navigation-Drawer
  *  [2] http://stackoverflow.com/questions/13472258/handling-actionbar-title-with-the-fragment-back-stack
+ *  [3] http://stackoverflow.com/questions/17107005/how-to-clear-fragment-backstack-in-android
  */
 public class MainActivity extends AppCompatActivity implements
         HomeFragment.Contract,
@@ -192,8 +193,15 @@ public class MainActivity extends AppCompatActivity implements
                 mCurrentTitle = getString(R.string.menu_title_home);
         }
 
+        // clear the back stack if adding home fragment again
+        FragmentManager fm = getSupportFragmentManager();
+        int count = fm.getBackStackEntryCount();
+        if (count > 1 && fragmentClass == HomeFragment.class) {
+            fm.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        }
+
         // replacing the existing fragment
-        getSupportFragmentManager().beginTransaction()
+        fm.beginTransaction()
                 .replace(R.id.fragment_container, fragment)
                 .addToBackStack(mCurrentTitle)
                 .commit();
