@@ -1,4 +1,9 @@
 <resources>
     <string name="app_name">Material Photo Gallery</string>
     <string name="about_menu_title">About</string>
+    <string name="home_menu_title">Home</string>
+    <string name="favourite_menu_title">Favourite</string>
+    <string name="map_menu_title">Map</string>
+    <string name="more_section_title">More</string>
+    <string name="settings_menu_title">Settings</string>
 </resources>

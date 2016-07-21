@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group
+        android:checkableBehavior="single">
+
+        <item
+            android:id="@+id/drawer_home"
+            android:checked="true"
+            android:icon="@drawable/ic_home"
+            android:title="@string/home_menu_title"/>
+
+        <item
+            android:id="@+id/drawer_favourite"
+            android:icon="@drawable/ic_favourite"
+            android:title="@string/favourite_menu_title"/>
+
+        <item
+            android:id="@+id/drawer_map"
+            android:icon="@drawable/ic_map"
+            android:title="@string/map_menu_title"/>
+
+        <!-- remove these -->
+        <item
+            android:id="@+id/drawer_settings"
+            android:icon="@drawable/ic_settings"
+            android:title="@string/settings_menu_title"/>
+
+        <item
+            android:id="@+id/drawer_about"
+            android:icon="@drawable/ic_about"
+            android:title="@string/about_menu_title"/>
+
+    </group>
+
+    <!--<item-->
+        <!--android:title=""-->
+        <!--android:id="@+id/section">-->
+
+        <!--<menu>-->
+            <!--<item-->
+                <!--android:id="@+id/drawer_settings"-->
+                <!--android:icon="@drawable/ic_settings"-->
+                <!--android:title="@string/settings_menu_title"/>-->
+
+            <!--<item-->
+                <!--android:id="@+id/drawer_about"-->
+                <!--android:icon="@drawable/ic_about"-->
+                <!--android:title="@string/about_menu_title"/>-->
+        <!--</menu>-->
+    <!--</item>-->
+
+</menu>
