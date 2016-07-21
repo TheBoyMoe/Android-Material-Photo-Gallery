@@ -17,8 +17,9 @@ import android.view.View;
 
 import com.example.materialphotogallery.R;
 import com.example.materialphotogallery.common.Utils;
+import com.example.materialphotogallery.ui.fragment.HomeFragment;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements HomeFragment.Contract{
 
     public static void launch(Activity activity) {
         Intent intent = new Intent(activity, MainActivity.class);
@@ -38,6 +39,15 @@ public class MainActivity extends AppCompatActivity {
         initToolbar();
         initFab();
         setupDrawerLayout();
+
+        HomeFragment fragment = (HomeFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+        if (fragment == null) {
+            fragment = HomeFragment.newInstance();
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.fragment_container, fragment)
+                    .commit();
+        }
+
     }
 
 
