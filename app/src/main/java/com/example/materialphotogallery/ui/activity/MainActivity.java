@@ -11,14 +11,19 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 
 import com.example.materialphotogallery.R;
 import com.example.materialphotogallery.common.Utils;
 import com.example.materialphotogallery.ui.fragment.HomeFragment;
-
+/**
+ *  References:
+ *  [[1] https://guides.codepath.com/android/Fragment-Navigation-Drawer
+ */
 public class MainActivity extends AppCompatActivity implements HomeFragment.Contract{
 
     public static void launch(Activity activity) {
@@ -106,6 +111,16 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.Cont
             if (actionbar != null) {
                 actionbar.setHomeAsUpIndicator(R.drawable.ic_drawer);
                 actionbar.setDisplayHomeAsUpEnabled(true);
+
+                // hide app title
+                actionbar.setDisplayShowTitleEnabled(false);
+                // enable custom view
+                actionbar.setDisplayShowCustomEnabled(true);
+                // instantiate & show title depending on fragment loaded
+                LayoutInflater inflater = LayoutInflater.from(this);
+                View pageTitle = inflater.inflate(R.layout.current_view_title, null);
+                ((TextView)pageTitle.findViewById(R.id.action_bar_title)).setText("custom page title");
+                actionbar.setCustomView(pageTitle);
             }
         }
 
