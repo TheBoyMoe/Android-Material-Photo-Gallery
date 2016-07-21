@@ -7,23 +7,6 @@
                 android:orientation="vertical"
                 android:theme="@style/ThemeOverlay.AppCompat.Dark">
 
-    <!--<ImageView-->
-        <!--android:id="@+id/avatar"-->
-        <!--android:layout_width="64dp"-->
-        <!--android:layout_height="64dp"-->
-        <!--android:layout_margin="@dimen/spacing_large"-->
-        <!--android:elevation="4dp"-->
-        <!--tools:src="@drawable/ic_launcher"/>-->
-
-    <!--<TextView-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_above="@+id/email"-->
-        <!--android:layout_marginLeft="@dimen/spacing_large"-->
-        <!--android:layout_marginStart="@dimen/spacing_large"-->
-        <!--android:text="Username"-->
-        <!--android:textAppearance="@style/TextAppearance.AppCompat.Body2"/>-->
-
     <TextView
         android:id="@+id/drawer_title"
         android:layout_alignParentBottom="true"
