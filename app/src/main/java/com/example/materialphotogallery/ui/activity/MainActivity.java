@@ -27,6 +27,7 @@ import com.example.materialphotogallery.thread.InsertItemThread;
 import com.example.materialphotogallery.ui.fragment.AboutFragment;
 import com.example.materialphotogallery.ui.fragment.FavouriteFragment;
 import com.example.materialphotogallery.ui.fragment.HomeFragment;
+import com.example.materialphotogallery.ui.fragment.ModelFragment;
 import com.example.materialphotogallery.ui.fragment.PhotoMapFragment;
 import com.example.materialphotogallery.ui.fragment.SettingsFragment;
 
@@ -48,6 +49,7 @@ public class MainActivity extends AppCompatActivity implements
         activity.startActivity(intent);
     }
 
+    private static final String MODEL_FRAGMENT = "model_fragment";
     private static final String CURRENT_PAGE_TITLE = "current_page_title";
     private static final String FULL_SIZE_PHOTO_PATH = "full_size_photo_path";
     private static final String PHOTO_PREVIEW_EXT = "_preview.jpg";
@@ -77,6 +79,16 @@ public class MainActivity extends AppCompatActivity implements
             mCurrentTitle = savedInstanceState.getString(CURRENT_PAGE_TITLE);
             setTitle(mCurrentTitle);
         }
+
+        // cache a reference to the model fragment
+        Fragment modelFragment = getSupportFragmentManager().findFragmentByTag(MODEL_FRAGMENT);
+        if (modelFragment == null) {
+            modelFragment = ModelFragment.newInstance();
+            getSupportFragmentManager().beginTransaction()
+                    .add(modelFragment, MODEL_FRAGMENT)
+                    .commit();
+        }
+
     }
 
     @Override
