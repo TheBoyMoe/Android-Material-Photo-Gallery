@@ -1,6 +1,7 @@
 package com.example.materialphotogallery.ui.activity;
 
 import android.app.Activity;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -22,6 +23,7 @@ import android.view.View;
 import com.example.materialphotogallery.R;
 import com.example.materialphotogallery.common.Constants;
 import com.example.materialphotogallery.common.Utils;
+import com.example.materialphotogallery.thread.InsertItemThread;
 import com.example.materialphotogallery.ui.fragment.AboutFragment;
 import com.example.materialphotogallery.ui.fragment.FavouriteFragment;
 import com.example.materialphotogallery.ui.fragment.HomeFragment;
@@ -47,6 +49,10 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     private static final String CURRENT_PAGE_TITLE = "current_page_title";
+    private static final String FULL_SIZE_PHOTO_PATH = "full_size_photo_path";
+    private static final String PHOTO_PREVIEW_EXT = "_preview.jpg";
+    private static final String PHOTO_THUMB_EXT = "_thumb.jpg";
+    private static final int PHOTO_REQUEST_CODE = 100;
     private CoordinatorLayout mLayout;
     private DrawerLayout mDrawer;
     private NavigationView mNavigationView;
@@ -67,12 +73,11 @@ public class MainActivity extends AppCompatActivity implements
         if (savedInstanceState == null) {
             displayInitialFragment();
         } else {
-            // else restore the page title
+            mFullSizePhotoPath = savedInstanceState.getString(FULL_SIZE_PHOTO_PATH);
             mCurrentTitle = savedInstanceState.getString(CURRENT_PAGE_TITLE);
             setTitle(mCurrentTitle);
         }
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -97,6 +102,7 @@ public class MainActivity extends AppCompatActivity implements
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putString(CURRENT_PAGE_TITLE, mCurrentTitle);
+        outState.putString(FULL_SIZE_PHOTO_PATH, mFullSizePhotoPath);
     }
 
     @Override
@@ -129,6 +135,31 @@ public class MainActivity extends AppCompatActivity implements
             case "About":
                 mNavigationView.setCheckedItem(R.id.drawer_about);
                 break;
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK) {
+            if (requestCode == PHOTO_REQUEST_CODE) {
+                // generate scaled versions of the photo
+                String previewPath = Utils.generatePreviewImage(mFullSizePhotoPath, 1400, 1400);
+                String thumbnailPath = Utils.generateThumbnailImage(mFullSizePhotoPath, 300, 300);
+
+                // insert record into database
+                ContentValues cv = Utils.setContentValues(
+                        Utils.generateCustomId(),
+                        mFullSizePhotoPath,
+                        previewPath,
+                        thumbnailPath
+                );
+                new InsertItemThread(this, cv).start();
+            }
+        } else if (resultCode == RESULT_CANCELED){
+            Utils.showSnackbar(mLayout, "Operation cancelled by user");
+        } else {
+            Utils.showSnackbar(mLayout, "Error executing operation");
         }
     }
 
@@ -229,7 +260,6 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
-
     private void initToolbar() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         if (toolbar != null) {
@@ -268,7 +298,7 @@ public class MainActivity extends AppCompatActivity implements
         if (filePathUri != null) {
             intent.putExtra(MediaStore.EXTRA_OUTPUT, filePathUri);
             if (Utils.isCameraAppInstalled(this, intent)) {
-                startActivityForResult(intent, Constants.PHOTO_REQUEST_CODE);
+                startActivityForResult(intent, PHOTO_REQUEST_CODE);
             } else {
                 Utils.showSnackbar(mLayout, "No app found suitable to capture photos");
             }

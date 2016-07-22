@@ -3,10 +3,14 @@ package com.example.materialphotogallery.common;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
@@ -21,13 +25,17 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
 import com.example.materialphotogallery.R;
+import com.example.materialphotogallery.event.ModelLoadedEvent;
+import com.example.materialphotogallery.model.DatabaseHelper;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import de.greenrobot.event.EventBus;
 import timber.log.Timber;
 
 public class Utils {
@@ -80,6 +88,7 @@ public class Utils {
         return Long.valueOf(formatter.format(new Date()));
     }
 
+    // camera related utilities
     public static boolean hasCamera(Context context) {
         PackageManager pm = context.getPackageManager();
         return pm.hasSystemFeature(PackageManager.FEATURE_CAMERA);
@@ -111,5 +120,118 @@ public class Utils {
         return Uri.fromFile(mediaFile);
     }
 
+    public static String generatePreviewImage(String filePath, int viewWidth, int viewHeight) {
+
+        // generate scaled image path
+        String temp = filePath.substring(0, filePath.length() - 4); // strip off file ext
+        String previewPath = temp + "_preview.jpg";
+
+        // get the bitmap's dimensions
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(filePath, options);
+        int imageWidth = options.outWidth;
+        int imageHeight = options.outHeight;
+
+        // set default scale factor
+        int scaleFactor = 1;
+
+        // determine scale factor
+        if (imageHeight > viewHeight || imageWidth > viewWidth) {
+            final int halfHeight = imageHeight / 2;
+            final int halfWidth = imageWidth / 2;
+
+            while ((halfHeight / scaleFactor) > viewHeight && (halfWidth / scaleFactor) > viewWidth) {
+                scaleFactor *= 2;
+            }
+
+            // where you have images with unique aspect ratios, eg pano's
+            long totalPixels = imageWidth * imageHeight / scaleFactor;
+
+            // Anything more than 2x the requested pixels we'll sample down further
+            final long totalReqPixelsCap = viewWidth * viewHeight * 2;
+            while (totalPixels > totalReqPixelsCap) {
+                scaleFactor *= 2;
+                totalPixels /= 2;
+            }
+        }
+
+        // decode the image file into a bitmap sized to fill the view
+        options.inJustDecodeBounds = false;
+        options.inSampleSize = scaleFactor;
+        options.inPurgeable = true;
+
+        Bitmap bitmap = BitmapFactory.decodeFile(filePath, options);
+
+        // write the bitmap to disk
+        FileOutputStream fos;
+        try {
+            fos = new FileOutputStream(new File(previewPath));
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 80, fos);
+            fos.flush();
+            fos.close();
+            bitmap.recycle();
+        } catch (Exception e) {
+            Timber.e("%s Failed to save thumbnail to disk: %s", Constants.LOG_TAG, e.getMessage());
+        }
+        return previewPath;
+    }
+
+    public static String generateThumbnailImage(String filePath, int targetWidth, int targetHeight) {
+
+        // generate thumbnail path
+        String temp = filePath.substring(0, filePath.length() - 4); // strip off file ext
+        String thumbnailPath = temp + "_thumb.jpg";
+
+
+        // Get the dimensions of the bitmap
+        BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+        bmOptions.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(filePath, bmOptions);
+        int photoW = bmOptions.outWidth;
+        int photoH = bmOptions.outHeight;
+
+        // Determine how much to scale down the image
+        int scaleFactor = Math.min(photoW/targetWidth, photoH/targetHeight);
+
+        // Decode the image file into a Bitmap sized to fill the View
+        bmOptions.inJustDecodeBounds = false;
+        bmOptions.inSampleSize = scaleFactor;
+        bmOptions.inPurgeable = true;
+
+        Bitmap bitmap = BitmapFactory.decodeFile(filePath, bmOptions);
+
+        // write the bitmap to disk
+        FileOutputStream fos = null;
+        try {
+            fos = new FileOutputStream(new File(thumbnailPath));
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 80, fos);
+            fos.flush();
+            fos.close();
+            bitmap.recycle();
+        } catch (Exception e) {
+            Timber.e("%s Failed to save thumbnail to disk: %s", Constants.LOG_TAG, e.getMessage());
+        }
+        return thumbnailPath;
+    }
+
+    // database related utilities
+    public static void queryAllItems(Context context) {
+        try {
+            Cursor results = DatabaseHelper.getInstance(context).loadItems(context);
+            EventBus.getDefault().postSticky(new ModelLoadedEvent(results));
+        } catch (Exception e) {
+            Timber.e("%s: error loading items from dbase, %s", Constants.LOG_TAG, e.getMessage());
+        }
+    }
+
+    public static ContentValues setContentValues(long id, String filePath, String previewPath, String thumbnailPath) {
+        ContentValues cv = new ContentValues();
+        cv.put(Constants.PHOTO_ID, id);
+        cv.put(Constants.PHOTO_FILE_PATH, filePath);
+        cv.put(Constants.PHOTO_PREVIEW_PATH, previewPath);
+        cv.put(Constants.PHOTO_THUMBNAIL_PATH, thumbnailPath);
+        return cv;
+    }
 
 }
