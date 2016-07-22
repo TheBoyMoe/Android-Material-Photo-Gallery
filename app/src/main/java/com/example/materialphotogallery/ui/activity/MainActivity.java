@@ -2,7 +2,9 @@ package com.example.materialphotogallery.ui.activity;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -49,6 +51,7 @@ public class MainActivity extends AppCompatActivity implements
     private DrawerLayout mDrawer;
     private NavigationView mNavigationView;
     private String mCurrentTitle;
+    private String mFullSizePhotoPath;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -216,11 +219,16 @@ public class MainActivity extends AppCompatActivity implements
             fab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Utils.showSnackbar(mLayout, "Clicked on fab");
+                    if (Utils.hasCamera(MainActivity.this)) {
+                        takePicture();
+                    } else {
+                        Utils.showSnackbar(mLayout, "Your device lacks a camera");
+                    }
                 }
             });
         }
     }
+
 
     private void initToolbar() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -230,23 +238,7 @@ public class MainActivity extends AppCompatActivity implements
             if (actionbar != null) {
                 actionbar.setHomeAsUpIndicator(R.drawable.ic_drawer);
                 actionbar.setDisplayHomeAsUpEnabled(true);
-
-                // hide app title to custom text view
-//                actionbar.setDisplayShowTitleEnabled(false);
-                // enable custom view
-//                actionbar.setDisplayShowCustomEnabled(true);
-                // instantiate & show title depending on fragment loaded
-//                LayoutInflater inflater = LayoutInflater.from(this);
-//                View pageTitle = inflater.inflate(R.layout.current_view_title, null);
-//                ((TextView)pageTitle.findViewById(R.id.action_bar_title)).setText(mCurrentTitle);
-//                actionbar.setCustomView(pageTitle);
             }
-
-            // hide the toolbar shadow on devices API 21+
-            // View toolbarShadow = findViewById(R.id.toolbar_shadow);
-            //if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            //    toolbarShadow.setVisibility(View.GONE);
-            //}
         }
     }
 
@@ -259,5 +251,41 @@ public class MainActivity extends AppCompatActivity implements
                 .addToBackStack(mCurrentTitle)
                 .commit();
     }
+
+    private void takePicture() {
+        if (canWriteToExternalStorage()) {
+            // permission given, take the picture
+            launchCameraApp();
+        } else {
+            // TODO request permissions
+            Utils.showSnackbar(mLayout, "You don't have permission to save photos to the device");
+        }
+    }
+
+    private void launchCameraApp() {
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        Uri filePathUri = Utils.generatePhotoFileUri(this);
+        if (filePathUri != null) {
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, filePathUri);
+            if (Utils.isCameraAppInstalled(this, intent)) {
+                startActivityForResult(intent, Constants.PHOTO_REQUEST_CODE);
+            } else {
+                Utils.showSnackbar(mLayout, "No app found suitable to capture photos");
+            }
+            mFullSizePhotoPath = generateFilePath(filePathUri);
+        }
+    }
+
+    private boolean canWriteToExternalStorage() {
+        // TODO
+        return true;
+    }
+
+    private String generateFilePath(Uri uriPath) {
+        String pattern = "/storage";
+        int position = uriPath.toString().indexOf(pattern);
+        return uriPath.toString().substring(position);
+    }
+
 
 }
