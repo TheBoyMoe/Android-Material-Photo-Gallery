@@ -8,13 +8,13 @@ public class PhotoItem {
     private String mFullSizePhotoPath;
     private String mPreviewPath;
     private String mThumbnailPath;
-    private boolean mFavourite;
+    private int mFavourite;
 
-    public boolean isFavourite() {
+    public int getFavourite() {
         return mFavourite;
     }
 
-    public void setFavourite(boolean favourite) {
+    public void setFavourite(int favourite) {
         mFavourite = favourite;
     }
 
