@@ -32,9 +32,13 @@ import com.example.materialphotogallery.custom.CustomMultiChoiceCursorRecyclerVi
 import com.example.materialphotogallery.custom.CustomRecyclerView;
 import com.example.materialphotogallery.custom.MultiChoiceModeListener;
 import com.example.materialphotogallery.event.ModelLoadedEvent;
+import com.example.materialphotogallery.thread.DeleteFilesFromStorageThread;
+import com.example.materialphotogallery.thread.DeleteItemsThread;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import de.greenrobot.event.EventBus;
 
@@ -62,7 +66,7 @@ public class HomeFragment extends ContractFragment<HomeFragment.Contract>
 
     @Override
     public boolean onActionItemClicked(final ActionMode mode, MenuItem item) {
-        SparseBooleanArray selectedItems = mAdapter.getSelectedPositions();
+        final SparseBooleanArray selectedItems = mAdapter.getSelectedPositions();
         switch (item.getItemId()) {
             case R.id.action_delete:
                 new MaterialDialog.Builder(getActivity())
@@ -70,8 +74,14 @@ public class HomeFragment extends ContractFragment<HomeFragment.Contract>
                     .onPositive(new MaterialDialog.SingleButtonCallback() {
                         @Override
                         public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                            // TODO
-
+                            Cursor cursor = mAdapter.getCursor();
+                            if (cursor != null) {
+                                String[] selectedIds = getPhotosForDeletion(cursor, selectedItems);
+                                // delete files from external storage
+                                new DeleteFilesFromStorageThread(getActivity(), selectedIds).start();
+                                // delete records from the database
+                                new DeleteItemsThread(getActivity(), selectedIds).start();
+                            }
                             mode.finish();
                         }
                     })
@@ -92,7 +102,10 @@ public class HomeFragment extends ContractFragment<HomeFragment.Contract>
                     .onPositive(new MaterialDialog.SingleButtonCallback() {
                         @Override
                         public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                            // TODO
+                            Cursor cursor = mAdapter.getCursor();
+                            if (cursor != null) {
+                                // TODO update database with fav boolean
+                            }
 
                             mode.finish();
                         }
@@ -219,6 +232,20 @@ public class HomeFragment extends ContractFragment<HomeFragment.Contract>
         } else {
             mEmptyView.setVisibility(View.VISIBLE);
         }
+    }
+
+    private String[] getPhotosForDeletion(Cursor cursor, SparseBooleanArray selectedItems) {
+        List<String> selectedIds = new ArrayList<>();
+        String id = null;
+        for (int i = 0; i < mAdapter.getItemCount(); i++) {
+            if (selectedItems.get(i)) {
+                if (cursor.moveToPosition(i)) {
+                    id = String.valueOf(cursor.getLong(cursor.getColumnIndex(Constants.PHOTO_ID)));
+                    selectedIds.add(id);
+                }
+            }
+        }
+        return selectedIds.toArray(new String[selectedIds.size()]);
     }
 
     public class CustomRecyclerViewAdapter extends CustomMultiChoiceCursorRecyclerViewAdapter<CustomViewHolder> {
