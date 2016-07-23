@@ -11,6 +11,6 @@
         android:id="@+id/drawer_title"
         android:layout_alignParentBottom="true"
         android:text="@string/drawer_header_title"
-        style="@style/DrawerTextStyle.Title"/>
+        style="@style/TextStyle.Drawer.Title"/>
 
 </RelativeLayout>

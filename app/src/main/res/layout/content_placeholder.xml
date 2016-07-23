@@ -6,9 +6,13 @@
     <TextView
         android:id="@+id/text_placeholder"
         android:layout_centerInParent="true"
-        android:padding="@dimen/normal"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="26sp"/>
+        style="@style/TextStyle.PlaceHolder"/>
+
+    <!-- toolbar shadow  -->
+    <View
+        android:id="@+id/toolbar_shadow"
+        android:layout_width="match_parent"
+        android:layout_height="3dp"
+        android:background="@drawable/shadow" />
 
 </RelativeLayout>

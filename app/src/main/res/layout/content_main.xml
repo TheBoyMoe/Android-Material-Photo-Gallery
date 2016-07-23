@@ -1,15 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v4.widget.NestedScrollView
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/dummy_content"
-        android:padding="@dimen/normal"
+    <com.example.materialphotogallery.custom.CustomRecyclerView
+        android:id="@+id/recycler_view"
+        android:background="@color/colorSecondaryBackground"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="32sp"/>
+        android:layout_height="match_parent"/>
 
-</android.support.v4.widget.NestedScrollView>
+    <TextView
+        android:id="@+id/empty_view"
+        android:text="@string/empty_text_view_label"
+        android:layout_centerInParent="true"
+        android:visibility="gone"
+        style="@style/TextStyle.PlaceHolder"/>
+
+    <!-- toolbar shadow  -->
+    <View
+        android:id="@+id/toolbar_shadow"
+        android:layout_width="match_parent"
+        android:layout_height="3dp"
+        android:background="@drawable/shadow" />
+
+</RelativeLayout>
+
+
+
+    <!-- employs layout animation -->
+    <!--<com.example.materialphotogallery.custom.GridRecyclerView-->
+        <!--xmlns:android="http://schemas.android.com/apk/res/android"-->
+        <!--xmlns:app="http://schemas.android.com/apk/res-auto"-->
+        <!--android:id="@+id/recycler"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:layoutAnimation="@anim/grid_layout_animation"-->
+        <!--app:layout_behavior="@string/appbar_scrolling_view_behavior"/>-->

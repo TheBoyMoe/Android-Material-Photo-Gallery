@@ -15,7 +15,6 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-
         <!-- CONTENT GOES HERE -->
         <FrameLayout
             android:id="@+id/fragment_container"
@@ -23,14 +22,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
 
-
-        <!--<com.antonioleiva.materializeyourapp.widgets.GridRecyclerView-->
-            <!--android:id="@+id/recycler"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="match_parent"-->
-            <!--android:layoutAnimation="@anim/grid_layout_animation"-->
-            <!--app:layout_behavior="@string/appbar_scrolling_view_behavior"/>-->
-
+        <!-- App & toolbar -->
         <android.support.design.widget.AppBarLayout
             android:id="@+id/appbar"
             android:layout_width="match_parent"
@@ -57,6 +49,7 @@
             <!--app:layout_anchorGravity="bottom"-->
             <!--android:background="@drawable/shadow" />-->
 
+        <!-- fab -->
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/fab"
             android:layout_gravity="bottom|end"
@@ -64,6 +57,7 @@
 
     </android.support.design.widget.CoordinatorLayout>
 
+    <!-- nav drawer view -->
     <android.support.design.widget.NavigationView
         android:id="@+id/navigation_view"
         android:layout_width="wrap_content"

@@ -7,8 +7,6 @@
     <com.example.materialphotogallery.custom.CustomTitleView
         android:id="@+id/action_bar_title"
         android:layout_centerVertical="true"
-        style="@style/ActionBarTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        style="@style/TextStyle.ActionBarTitle"/>
 
 </RelativeLayout>

@@ -31,6 +31,8 @@ import com.example.materialphotogallery.ui.fragment.ModelFragment;
 import com.example.materialphotogallery.ui.fragment.PhotoMapFragment;
 import com.example.materialphotogallery.ui.fragment.SettingsFragment;
 
+import java.util.List;
+
 import timber.log.Timber;
 
 /**
@@ -50,6 +52,12 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     private static final String MODEL_FRAGMENT = "model_fragment";
+    private static final String HOME_FRAGMENT = "home_fragment";
+    private static final String FAVOURITE_FRAGMENT = "favourite_fragment";
+    private static final String PHOTO_MAP_FRAGMENT = "photo_map_fragment";
+    private static final String SETTINGS_FRAGMENT = "settings_fragment";
+    private static final String ABOUT_FRAGMENT = "about_fragment";
+
     private static final String CURRENT_PAGE_TITLE = "current_page_title";
     private static final String FULL_SIZE_PHOTO_PATH = "full_size_photo_path";
     private static final String PHOTO_PREVIEW_EXT = "_preview.jpg";
@@ -89,6 +97,19 @@ public class MainActivity extends AppCompatActivity implements
                     .commit();
         }
 
+    }
+
+    @Override
+    public void onEnterAnimationComplete() {
+        super.onEnterAnimationComplete();
+        FragmentManager fm = getSupportFragmentManager();
+        List<Fragment> list = fm.getFragments();
+        if (list.size() == 1) { // home fragment is top of stack/visible
+            HomeFragment fragment = (HomeFragment) fm.findFragmentByTag(HOME_FRAGMENT);
+            if (fragment != null) {
+                fragment.onEnterAnimationComplete();
+            }
+        }
     }
 
     @Override
@@ -190,25 +211,32 @@ public class MainActivity extends AppCompatActivity implements
     private void selectDrawerItem(MenuItem item) {
         // select the fragment to instantiate based on the item clicked
         Fragment fragment = null;
+        String tag = null;
         Class fragmentClass;
         switch (item.getItemId()) {
             case R.id.drawer_home:
                 fragmentClass = HomeFragment.class;
+                tag = HOME_FRAGMENT;
                 break;
             case R.id.drawer_favourite:
                 fragmentClass = FavouriteFragment.class;
+                tag = FAVOURITE_FRAGMENT;
                 break;
             case R.id.drawer_map:
                 fragmentClass = PhotoMapFragment.class;
+                tag = PHOTO_MAP_FRAGMENT;
                 break;
             case R.id.drawer_settings:
                 fragmentClass = SettingsFragment.class;
+                tag = SETTINGS_FRAGMENT;
                 break;
             case R.id.drawer_about:
                 fragmentClass = AboutFragment.class;
+                tag = ABOUT_FRAGMENT;
                 break;
             default:
                 fragmentClass = HomeFragment.class;
+                tag = HOME_FRAGMENT;
         }
         try {
             fragment = (Fragment) fragmentClass.newInstance();
@@ -248,7 +276,8 @@ public class MainActivity extends AppCompatActivity implements
 
         // replacing the existing fragment
         fm.beginTransaction()
-                .replace(R.id.fragment_container, fragment)
+                //.replace(R.id.fragment_container, fragment)
+                .replace(R.id.fragment_container, fragment, tag)
                 .addToBackStack(mCurrentTitle)
                 .commit();
 
@@ -289,7 +318,7 @@ public class MainActivity extends AppCompatActivity implements
         setTitle(mCurrentTitle);
 
         getSupportFragmentManager().beginTransaction()
-                .add(R.id.fragment_container, HomeFragment.newInstance())
+                .add(R.id.fragment_container, HomeFragment.newInstance(), HOME_FRAGMENT)
                 .addToBackStack(mCurrentTitle)
                 .commit();
     }

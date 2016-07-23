@@ -38,26 +38,38 @@
         <item name="rippleColor">@color/colorAccentDark</item>
     </style>
 
+
+
     <!-- Text Styles -->
-    <style name="DrawerTextStyle">
+    <style name="TextStyle">
         <item name="android:fontFamily">sans-serif-condensed</item>
-        <item name="android:textColor">@color/colorInverseText</item>
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
+    </style>
+
+
+    <style name="TextStyle.Drawer">
+        <item name="android:textColor">@color/colorInverseText</item>
         <item name="android:layout_marginLeft">@dimen/normal</item>
     </style>
 
-    <style name="DrawerTextStyle.Title">
+    <style name="TextStyle.Drawer.Title">
         <item name="android:layout_marginBottom">@dimen/normal</item>
         <item name="android:textSize">22sp</item>
     </style>
 
-    <style name="ActionBarTitle">
+    <style name="TextStyle.ActionBarTitle">
         <item name="android:textColor">@color/colorInverseText</item>
         <item name="android:textSize">22sp</item>
-        <item name="android:fontFamily">sans-serif-condensed</item>
         <item name="android:maxLines">1</item>
         <item name="android:ellipsize">end</item>
+
     </style>
+
+    <style name="TextStyle.PlaceHolder">
+        <item name="android:textSize">26sp</item>
+        <item name="android:padding">@dimen/normal</item>
+    </style>
+
 
 </resources>

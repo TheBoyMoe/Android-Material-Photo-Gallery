@@ -217,6 +217,7 @@ public class Utils {
 
     // database related utilities
     public static void queryAllItems(Context context) {
+        Timber.i("%s: QUERY THE DATABASE");
         try {
             Cursor results = DatabaseHelper.getInstance(context).loadItems(context);
             EventBus.getDefault().postSticky(new ModelLoadedEvent(results));

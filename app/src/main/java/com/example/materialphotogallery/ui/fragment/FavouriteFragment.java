@@ -1,6 +1,7 @@
 package com.example.materialphotogallery.ui.fragment;
 
 
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -29,6 +30,12 @@ public class FavouriteFragment extends ContractFragment<FavouriteFragment.Contra
         View view = inflater.inflate(R.layout.content_placeholder, container, false);
         TextView tv = (TextView) view.findViewById(R.id.text_placeholder);
         tv.setText(String.format("%s fragment", getString(R.string.menu_title_favourite)));
+
+        // hide the toolbar shadow on devices API 21+
+        View toolbarShadow = view.findViewById(R.id.toolbar_shadow);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            toolbarShadow.setVisibility(View.GONE);
+        }
 
         return view;
     }
