@@ -14,4 +14,13 @@
         <item name="android:statusBarColor">@android:color/transparent</item>
     </style>
 
+    <!-- allow contextual actionbar to float over the toolbar when visible -->
+    <style name="AppTheme.ContextActionBar" parent="AppTheme.NoActionBar">
+        <item name="windowActionModeOverlay">true</item>
+        <!-- enable window content transitions supported in api 21+ -->
+        <item name="android:windowContentTransitions">true</item>
+        <!-- context action bar background -->
+        <item name="actionModeBackground">@color/colorAccent</item>
+    </style>
+
 </resources>

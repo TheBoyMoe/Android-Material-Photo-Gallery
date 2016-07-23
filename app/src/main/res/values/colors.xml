@@ -14,5 +14,6 @@
     <color name="colorSecondaryBackground">@color/secondary_background</color>
     <color name="colorPrimaryIcons">@color/primary_icons</color>
     <color name="colorSecondaryIcons">@color/secondary_icons</color>
+    <color name="colorSelectedBackground">@color/background_selection</color>
 
 </resources>

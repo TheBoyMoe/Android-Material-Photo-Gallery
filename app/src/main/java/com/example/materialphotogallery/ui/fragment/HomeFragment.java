@@ -5,15 +5,24 @@ import android.content.res.Configuration;
 import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.view.ActionMode;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.example.materialphotogallery.R;
 import com.example.materialphotogallery.common.Constants;
 import com.example.materialphotogallery.common.ContractFragment;
@@ -21,6 +30,7 @@ import com.example.materialphotogallery.custom.CustomImageView;
 import com.example.materialphotogallery.custom.CustomItemDecoration;
 import com.example.materialphotogallery.custom.CustomMultiChoiceCursorRecyclerViewAdapter;
 import com.example.materialphotogallery.custom.CustomRecyclerView;
+import com.example.materialphotogallery.custom.MultiChoiceModeListener;
 import com.example.materialphotogallery.event.ModelLoadedEvent;
 import com.squareup.picasso.Picasso;
 
@@ -29,12 +39,83 @@ import java.io.File;
 import de.greenrobot.event.EventBus;
 
 
-public class HomeFragment extends ContractFragment<HomeFragment.Contract>{
+public class HomeFragment extends ContractFragment<HomeFragment.Contract>
+        implements MultiChoiceModeListener{
 
-    private CustomRecyclerView mRecyclerView;
+
+    // MultiChoiceModeListener impl
+    @Override
+    public void onItemSelectionChanged(ActionMode mode, int position, boolean selected) {
+        mode.setTitle(mAdapter.getSelectedCount() + " selected");
+    }
+
+    @Override
+    public boolean onCreateActionMode(ActionMode mode, MenuInflater inflater, Menu menu) {
+        inflater.inflate(R.menu.menu_context_action_bar, menu);
+        return true;
+    }
+
+    @Override
+    public void onDestroyActionMode() {
+        // no-op
+    }
+
+    @Override
+    public boolean onActionItemClicked(final ActionMode mode, MenuItem item) {
+        SparseBooleanArray selectedItems = mAdapter.getSelectedPositions();
+        switch (item.getItemId()) {
+            case R.id.action_delete:
+                new MaterialDialog.Builder(getActivity())
+                    .title("Delete selection")
+                    .onPositive(new MaterialDialog.SingleButtonCallback() {
+                        @Override
+                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                            // TODO
+
+                            mode.finish();
+                        }
+                    })
+                    .onNegative(new MaterialDialog.SingleButtonCallback() {
+                        @Override
+                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                            mode.finish();
+                        }
+                    })
+                    .positiveText("Agree")
+                    .negativeText("Cancel")
+                    .show();
+
+                return true;
+            case R.id.action_favourite:
+                new MaterialDialog.Builder(getActivity())
+                    .title("Save selected")
+                    .onPositive(new MaterialDialog.SingleButtonCallback() {
+                        @Override
+                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                            // TODO
+
+                            mode.finish();
+                        }
+                    })
+                    .onNegative(new MaterialDialog.SingleButtonCallback() {
+                        @Override
+                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                            mode.finish();
+                        }
+                    })
+                    .positiveText("Agree")
+                    .negativeText("Cancel")
+                    .show();
+
+                return true;
+        }
+        return true;
+    }
+    // END
 
     public interface Contract {
-        // TODO handle ViewHolder.OnClick()
+        // handle ViewHolder.OnClick()
+        void onHomeItemClick(long id);
     }
 
     public void onEnterAnimationComplete() {
@@ -43,6 +124,7 @@ public class HomeFragment extends ContractFragment<HomeFragment.Contract>{
     }
 
     private Cursor mCursor;
+    private CustomRecyclerView mRecyclerView;
     private CustomRecyclerViewAdapter mAdapter;
     private TextView mEmptyView;
 
@@ -79,7 +161,7 @@ public class HomeFragment extends ContractFragment<HomeFragment.Contract>{
                 getResources().getDimensionPixelSize(R.dimen.grid_item_space),
                 getResources().getDimensionPixelSize(R.dimen.grid_item_space)));
         mAdapter = new CustomRecyclerViewAdapter(getActivity(), mCursor);
-        //mAdapter.setMultiChoiceModeListener((AppCompatActivity)getActivity(), this); // FIXME
+        mAdapter.setMultiChoiceModeListener((AppCompatActivity)getActivity(), this); // FIXME
         if (isAdded()) {
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
                 mRecyclerView.setAdapter(mAdapter);
@@ -159,7 +241,8 @@ public class HomeFragment extends ContractFragment<HomeFragment.Contract>{
                 // highlight any selected notes
                 int position = cursor.getPosition();
                 viewHolder.itemView.setBackgroundColor(ContextCompat.getColor(
-                        getActivity(), isSelected(position) ? R.color.colorAccent : R.color.colorSecondaryBackground));
+                        getActivity(), isSelected(position) ?
+                            R.color.colorSelectedBackground : R.color.colorSecondaryBackground));
             }
         }
 
@@ -171,6 +254,7 @@ public class HomeFragment extends ContractFragment<HomeFragment.Contract>{
 
         CustomImageView mImageView;
         String mThumbnailPath;
+        long mId;
 
         public CustomViewHolder(View itemView) {
             super(itemView);
@@ -180,6 +264,7 @@ public class HomeFragment extends ContractFragment<HomeFragment.Contract>{
         }
 
         public void bindViewHolder(Cursor cursor) {
+            mId = cursor.getLong(cursor.getColumnIndex(Constants.PHOTO_ID));
             mThumbnailPath = cursor.getString(cursor.getColumnIndex(Constants.PHOTO_THUMBNAIL_PATH));
             Picasso.with(getActivity())
                     .load(new File(mThumbnailPath))
@@ -190,13 +275,17 @@ public class HomeFragment extends ContractFragment<HomeFragment.Contract>{
 
         @Override
         public void onClick(View view) {
-            // TODO propagate to hosting activity
+            if (mAdapter.isActionModeActive()) {
+                mAdapter.toggleSelected(getAdapterPosition());
+            } else {
+                getContract().onHomeItemClick(mId);
+            }
         }
 
         @Override
         public boolean onLongClick(View view) {
-            // TODO
-            return false;
+            mAdapter.toggleSelected(getAdapterPosition());
+            return true;
         }
     }
 

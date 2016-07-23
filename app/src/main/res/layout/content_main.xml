@@ -2,12 +2,12 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/colorSecondaryBackground"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <com.example.materialphotogallery.custom.CustomRecyclerView
         android:id="@+id/recycler_view"
-        android:background="@color/colorSecondaryBackground"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 

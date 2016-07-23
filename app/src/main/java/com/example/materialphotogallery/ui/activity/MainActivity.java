@@ -56,6 +56,13 @@ public class MainActivity extends AppCompatActivity implements
         FavouriteFragment.Contract,
         PhotoMapFragment.Contract{
 
+    // Contract methods
+    @Override
+    public void onHomeItemClick(long id) {
+        Utils.showSnackbar(mLayout, "Clicked item: " + id);
+    }
+    // END
+
     public static void launch(Activity activity) {
         Intent intent = new Intent(activity, MainActivity.class);
         activity.startActivity(intent);
@@ -448,6 +455,7 @@ public class MainActivity extends AppCompatActivity implements
         int position = uriPath.toString().indexOf(pattern);
         return uriPath.toString().substring(position);
     }
+
 
 
 }

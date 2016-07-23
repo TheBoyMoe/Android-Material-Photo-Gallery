@@ -15,5 +15,6 @@
     <color name="primary_icons">@color/md_white_1000</color>
     <color name="secondary_icons">@color/md_grey_500</color>
     <color name="divider">@color/md_grey_400</color>
+    <color name="background_selection">@color/md_blue_500</color>
 
 </resources>

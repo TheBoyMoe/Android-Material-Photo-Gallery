@@ -5,6 +5,7 @@
 
     <com.example.materialphotogallery.custom.CustomImageView
         android:id="@+id/image_view"
+        android:padding="@dimen/xxsmall"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 
