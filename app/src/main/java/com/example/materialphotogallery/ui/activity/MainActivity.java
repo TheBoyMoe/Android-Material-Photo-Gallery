@@ -3,14 +3,22 @@ package com.example.materialphotogallery.ui.activity;
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.provider.MediaStore;
+import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -35,6 +43,8 @@ import java.util.List;
 
 import timber.log.Timber;
 
+import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
+
 /**
  *  References:
  *  [1] https://guides.codepath.com/android/Fragment-Navigation-Drawer
@@ -51,6 +61,11 @@ public class MainActivity extends AppCompatActivity implements
         activity.startActivity(intent);
     }
 
+    private static final String[] PERMISSIONS_REQUIRED = {
+          WRITE_EXTERNAL_STORAGE
+    };
+    private static final String IS_FIRST_TIME_IN = "is_first_time_in";
+    private static final String PERMISSIONS_TRACK_STATE = "permissions_track_state";
     private static final String MODEL_FRAGMENT = "model_fragment";
     private static final String HOME_FRAGMENT = "home_fragment";
     private static final String FAVOURITE_FRAGMENT = "favourite_fragment";
@@ -62,7 +77,12 @@ public class MainActivity extends AppCompatActivity implements
     private static final String FULL_SIZE_PHOTO_PATH = "full_size_photo_path";
     private static final String PHOTO_PREVIEW_EXT = "_preview.jpg";
     private static final String PHOTO_THUMB_EXT = "_thumb.jpg";
+
     private static final int PHOTO_REQUEST_CODE = 100;
+    private static final int PERMISSIONS_REQUEST_CODE = 101;
+
+    private SharedPreferences mPrefs;
+    private boolean mIsInPermission = false;
     private CoordinatorLayout mLayout;
     private DrawerLayout mDrawer;
     private NavigationView mNavigationView;
@@ -74,6 +94,7 @@ public class MainActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mLayout = (CoordinatorLayout) findViewById(R.id.coordinator_layout);
+        mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
 
         initToolbar();
         initFab();
@@ -84,6 +105,7 @@ public class MainActivity extends AppCompatActivity implements
             displayInitialFragment();
         } else {
             mFullSizePhotoPath = savedInstanceState.getString(FULL_SIZE_PHOTO_PATH);
+            mIsInPermission = savedInstanceState.getBoolean(PERMISSIONS_TRACK_STATE);
             mCurrentTitle = savedInstanceState.getString(CURRENT_PAGE_TITLE);
             setTitle(mCurrentTitle);
         }
@@ -96,8 +118,14 @@ public class MainActivity extends AppCompatActivity implements
                     .add(modelFragment, MODEL_FRAGMENT)
                     .commit();
         }
+        // request the req'd permissions when the app first launches and permission has not been given
+        if (iFirstTimeIn() && !mIsInPermission) {
+            mIsInPermission = true;
+            ActivityCompat.requestPermissions(this, PERMISSIONS_REQUIRED, PERMISSIONS_REQUEST_CODE);
+        }
 
     }
+
 
     @Override
     public void onEnterAnimationComplete() {
@@ -136,6 +164,7 @@ public class MainActivity extends AppCompatActivity implements
         super.onSaveInstanceState(outState);
         outState.putString(CURRENT_PAGE_TITLE, mCurrentTitle);
         outState.putString(FULL_SIZE_PHOTO_PATH, mFullSizePhotoPath);
+        outState.putBoolean(PERMISSIONS_TRACK_STATE, mIsInPermission);
     }
 
     @Override
@@ -193,6 +222,25 @@ public class MainActivity extends AppCompatActivity implements
             Utils.showSnackbar(mLayout, "Operation cancelled by user");
         } else {
             Utils.showSnackbar(mLayout, "Error executing operation");
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        // method called back as a result of requestPermissions() being called
+        boolean permissionNotGiven = false;
+        mIsInPermission = false;
+
+        if (requestCode == PERMISSIONS_REQUEST_CODE) {
+            if (canWriteToExternalStorage()) {
+                launchCameraApp();
+            } else if (!shouldShowWriteToStorageRational()) {
+                permissionNotGiven = true;
+            }
+        }
+
+        if (permissionNotGiven) {
+            Utils.showSnackbar(mLayout, "Use of the camera requires accepting the requested permission");
         }
     }
 
@@ -323,13 +371,41 @@ public class MainActivity extends AppCompatActivity implements
                 .commit();
     }
 
+    private boolean iFirstTimeIn() {
+        // if no result saved, first time app launched
+        boolean firstTimeIn = mPrefs.getBoolean(IS_FIRST_TIME_IN, true);
+        if (firstTimeIn) {
+            mPrefs.edit().putBoolean(IS_FIRST_TIME_IN, false).apply();
+        }
+        return firstTimeIn;
+    }
+
+    private boolean hasPermission(String permission) {
+        return ContextCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED;
+    }
+
+    private boolean canWriteToExternalStorage() {
+        // check if the req'd permission is held
+        return hasPermission(WRITE_EXTERNAL_STORAGE);
+    }
+
+    private boolean shouldShowWriteToStorageRational() {
+        return ActivityCompat.shouldShowRequestPermissionRationale(this, WRITE_EXTERNAL_STORAGE);
+    }
+
     private void takePicture() {
         if (canWriteToExternalStorage()) {
             // permission given, take the picture
             launchCameraApp();
-        } else {
-            // TODO request permissions
-            Utils.showSnackbar(mLayout, "You don't have permission to save photos to the device");
+        }
+        else if (!shouldShowWriteToStorageRational()) {
+            // permission req'd previously and denied, inform user permission req'd, allowing them
+            // the option via a snackbar to provide permission via Device Settings page for app
+            showRationalMessage(getString(R.string.snackbar_action_text));
+        }
+        else {
+            // otherwise request permissions
+            ActivityCompat.requestPermissions(this, PERMISSIONS_REQUIRED, PERMISSIONS_REQUEST_CODE);
         }
     }
 
@@ -347,9 +423,24 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
-    private boolean canWriteToExternalStorage() {
-        // TODO
-        return true;
+    private void showRationalMessage(String message) {
+        //  add action to the snackbar allowing user to amend permissions in app's settings
+        //Utils.showSnackbar(mLayout, message); // FIXME
+        Snackbar snackbar = Snackbar
+                .make(mLayout, message, Snackbar.LENGTH_LONG)
+                .setAction(R.string.snackbar_action_title, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        // launch app settings screen
+                        Intent intent = new Intent();
+                        intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                        Uri uri = Uri.fromParts("package", getPackageName(), null);
+                        intent.setData(uri);
+                        startActivity(intent);
+                    }
+                });
+
+        snackbar.show();
     }
 
     private String generateFilePath(Uri uriPath) {

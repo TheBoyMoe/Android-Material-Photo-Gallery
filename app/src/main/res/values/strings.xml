@@ -10,4 +10,6 @@
     <string name="dummy_text">Pork belly frankfurter picanha doner kevin pork loin. Pork loin hamburger brisket alcatra flank shoulder turkey spare ribs sausage. Pork belly shankle landjaeger sausage strip steak frankfurter andouille rump tenderloin pig tail tri-tip short loin ham hock hamburger. Biltong tri-tip ground round ball tip boudin, frankfurter doner brisket pork chop pancetta pork loin. Rump beef ribs kevin drumstick. Turkey porchetta pig boudin bresaola pork beef ribs spare ribs short loin flank tail. Boudin biltong tail bacon pork flank, venison swine t-bone pig picanha bresaola. Filet mignon tail pig boudin chuck tongue pork brisket hamburger frankfurter flank. Meatball short loin shankle, leberkas pork kevin pastrami turducken meatloaf chuck prosciutto salami picanha. Meatball corned beef flank pig capicola prosciutto. Turkey spare ribs cow beef capicola.</string>
     <string name="drawer_header_title">Material Photo Gallery</string>
     <string name="empty_text_view_label">No items to show</string>
+    <string name="snackbar_action_title">Change app permissions</string>
+    <string name="snackbar_action_text">Enable required permission</string>
 </resources>
