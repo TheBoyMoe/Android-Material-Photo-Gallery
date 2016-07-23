@@ -221,7 +221,8 @@ public class MainActivity extends AppCompatActivity implements
                         Utils.generateCustomId(),
                         mFullSizePhotoPath,
                         previewPath,
-                        thumbnailPath
+                        thumbnailPath,
+                        0 // sqlite does not accept booleans, use 0 for false, 1 for true
                 );
                 new InsertItemThread(this, cv).start();
             }

@@ -226,12 +226,14 @@ public class Utils {
         }
     }
 
-    public static ContentValues setContentValues(long id, String filePath, String previewPath, String thumbnailPath) {
+    public static ContentValues setContentValues(long id,
+            String filePath, String previewPath, String thumbnailPath, int favourite) {
         ContentValues cv = new ContentValues();
         cv.put(Constants.PHOTO_ID, id);
         cv.put(Constants.PHOTO_FILE_PATH, filePath);
         cv.put(Constants.PHOTO_PREVIEW_PATH, previewPath);
         cv.put(Constants.PHOTO_THUMBNAIL_PATH, thumbnailPath);
+        cv.put(Constants.PHOTO_FAVOURITE, favourite);
         return cv;
     }
 

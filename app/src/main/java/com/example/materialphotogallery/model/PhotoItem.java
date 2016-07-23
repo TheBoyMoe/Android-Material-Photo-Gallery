@@ -8,6 +8,15 @@ public class PhotoItem {
     private String mFullSizePhotoPath;
     private String mPreviewPath;
     private String mThumbnailPath;
+    private boolean mFavourite;
+
+    public boolean isFavourite() {
+        return mFavourite;
+    }
+
+    public void setFavourite(boolean favourite) {
+        mFavourite = favourite;
+    }
 
     public long getId() {
         return mId;

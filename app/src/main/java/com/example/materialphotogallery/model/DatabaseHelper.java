@@ -35,7 +35,8 @@ public class DatabaseHelper extends SQLiteOpenHelper{
                 + Constants.PHOTO_ID + " INTEGER, "
                 + Constants.PHOTO_FILE_PATH + " TEXT, "
                 + Constants.PHOTO_PREVIEW_PATH + " TEXT, "
-                + Constants.PHOTO_THUMBNAIL_PATH + " TEXT"
+                + Constants.PHOTO_THUMBNAIL_PATH + " TEXT, "
+                + Constants.PHOTO_FAVOURITE + " INTEGER"
                 +  ");");
     }
 
