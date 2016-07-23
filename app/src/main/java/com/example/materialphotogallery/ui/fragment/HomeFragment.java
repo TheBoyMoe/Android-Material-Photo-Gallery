@@ -104,7 +104,9 @@ public class HomeFragment extends ContractFragment<HomeFragment.Contract>
                         public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                             Cursor cursor = mAdapter.getCursor();
                             if (cursor != null) {
-                                // TODO update database with fav boolean
+                                List<Long> selectedIds = getFavouritePhotos(cursor, selectedItems);
+                                // TODO update database with fav
+
                             }
 
                             mode.finish();
@@ -236,16 +238,28 @@ public class HomeFragment extends ContractFragment<HomeFragment.Contract>
 
     private String[] getPhotosForDeletion(Cursor cursor, SparseBooleanArray selectedItems) {
         List<String> selectedIds = new ArrayList<>();
-        String id = null;
         for (int i = 0; i < mAdapter.getItemCount(); i++) {
             if (selectedItems.get(i)) {
                 if (cursor.moveToPosition(i)) {
-                    id = String.valueOf(cursor.getLong(cursor.getColumnIndex(Constants.PHOTO_ID)));
+                    String id = String.valueOf(cursor.getLong(cursor.getColumnIndex(Constants.PHOTO_ID)));
                     selectedIds.add(id);
                 }
             }
         }
         return selectedIds.toArray(new String[selectedIds.size()]);
+    }
+
+    private List<Long> getFavouritePhotos(Cursor cursor, SparseBooleanArray selectedItems) {
+        List<Long> selectedIds = new ArrayList<>();
+        for (int i = 0; i < mAdapter.getItemCount(); i++) {
+            if (selectedItems.get(i)) {
+                if (cursor.moveToPosition(i)) {
+                    long id = cursor.getLong(cursor.getColumnIndex(Constants.PHOTO_ID));
+                    selectedIds.add(id);
+                }
+            }
+        }
+        return selectedIds;
     }
 
     public class CustomRecyclerViewAdapter extends CustomMultiChoiceCursorRecyclerViewAdapter<CustomViewHolder> {
