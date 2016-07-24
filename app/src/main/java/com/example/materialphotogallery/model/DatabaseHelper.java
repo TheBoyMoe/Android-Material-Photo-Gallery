@@ -81,10 +81,12 @@ public class DatabaseHelper extends SQLiteOpenHelper{
     }
 
     // update item
-    public void updateItem(Context context, ContentValues values){
+    public void updateItems(Context context, ContentValues[] values){
         // Timber.i("%s: updating item in the dbase", Constants.LOG_TAG);
         SQLiteDatabase db = getDb(context);
-        db.update(Constants.TABLE, values, Constants.PHOTO_ID + " = " + values.getAsString(Constants.PHOTO_ID), null);
+        for (ContentValues value : values) {
+            db.update(Constants.TABLE, value, Constants.PHOTO_ID + " = " + value.getAsString(Constants.PHOTO_ID), null);
+        }
     }
 
 }

@@ -1,5 +1,6 @@
 package com.example.materialphotogallery.ui.fragment;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.database.Cursor;
@@ -26,6 +27,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.example.materialphotogallery.R;
 import com.example.materialphotogallery.common.Constants;
 import com.example.materialphotogallery.common.ContractFragment;
+import com.example.materialphotogallery.common.Utils;
 import com.example.materialphotogallery.custom.CustomImageView;
 import com.example.materialphotogallery.custom.CustomItemDecoration;
 import com.example.materialphotogallery.custom.CustomMultiChoiceCursorRecyclerViewAdapter;
@@ -34,6 +36,7 @@ import com.example.materialphotogallery.custom.MultiChoiceModeListener;
 import com.example.materialphotogallery.event.ModelLoadedEvent;
 import com.example.materialphotogallery.thread.DeleteFilesFromStorageThread;
 import com.example.materialphotogallery.thread.DeleteItemsThread;
+import com.example.materialphotogallery.thread.UpdateItemsThread;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
@@ -105,10 +108,16 @@ public class HomeFragment extends ContractFragment<HomeFragment.Contract>
                             Cursor cursor = mAdapter.getCursor();
                             if (cursor != null) {
                                 List<Long> selectedIds = getFavouritePhotos(cursor, selectedItems);
-                                // TODO update database with fav
-
+                                // update database with fav
+                                ContentValues[] updateValues = new ContentValues[selectedIds.size()];
+                                ContentValues value = new ContentValues();
+                                for (int i = 0; i < selectedIds.size(); i++) {
+                                    long id = selectedIds.get(i);
+                                    value = Utils.updateContentValues(id, 1);
+                                    updateValues[i] = value;
+                                }
+                                new UpdateItemsThread(getActivity(), updateValues).start();
                             }
-
                             mode.finish();
                         }
                     })
@@ -288,7 +297,6 @@ public class HomeFragment extends ContractFragment<HomeFragment.Contract>
         }
 
     }
-
 
     public class CustomViewHolder extends RecyclerView.ViewHolder
             implements View.OnClickListener, View.OnLongClickListener{

@@ -237,4 +237,11 @@ public class Utils {
         return cv;
     }
 
+    public static ContentValues updateContentValues(long id, int favourite) {
+        ContentValues cv = new ContentValues();
+        cv.put(Constants.PHOTO_ID, id);
+        cv.put(Constants.PHOTO_FAVOURITE, favourite);
+        return cv;
+    }
+
 }
