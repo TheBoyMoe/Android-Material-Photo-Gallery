@@ -22,11 +22,13 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.materialphotogallery.R;
 import com.example.materialphotogallery.event.ModelLoadedEvent;
 import com.example.materialphotogallery.model.DatabaseHelper;
+import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -244,6 +246,14 @@ public class Utils {
         cv.put(Constants.PHOTO_ID, id);
         cv.put(Constants.PHOTO_FAVOURITE, favourite);
         return cv;
+    }
+
+    public static void loadPreviewWithPicasso(Context context, String previewPath, ImageView view) {
+        Picasso.with(context)
+                .load(new File(previewPath))
+                .fit() // scale image to fit image view element - also scales the placeholder
+                .centerInside()
+                .into(view);
     }
 
 }

@@ -10,7 +10,7 @@
         android:layout_height="match_parent"/>
 
    <TextView
-       android:id="@+id/image_count"
+       android:id="@+id/image_position"
        style="@style/TextStyle.PreviewCount"
        android:layout_alignParentTop="true"
        android:layout_marginTop="@dimen/normal"
@@ -21,7 +21,9 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_marginBottom="@dimen/large"
+        android:layout_marginLeft="@dimen/normal"
+        android:layout_marginStart="@dimen/normal"
+        android:layout_marginBottom="@dimen/normal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -29,9 +31,9 @@
             android:id="@+id/image_title"
             style="@style/TextStyle.PreviewCount"/>
 
-        <TextView
-            android:id="@+id/image_description"
-            style="@style/TextStyle.PreviewCount"/>
+        <!--<TextView-->
+            <!--android:id="@+id/image_description"-->
+            <!--style="@style/TextStyle.PreviewCount"/>-->
 
     </LinearLayout>
 

@@ -1,8 +1,11 @@
 package com.example.materialphotogallery.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.util.Locale;
 
-public class PhotoItem {
+public class PhotoItem implements Parcelable {
 
     private long mId;
     private String mTitle;
@@ -11,6 +14,8 @@ public class PhotoItem {
     private String mPreviewPath;
     private String mThumbnailPath;
     private int mFavourite;
+
+    public PhotoItem() { }
 
     public String getTitle() {
         return mTitle;
@@ -72,5 +77,45 @@ public class PhotoItem {
     public String toString() {
         return String.format(Locale.ENGLISH, "Id: %d, previewPath: %s", getId(), getPreviewPath());
     }
+
+    // impl Parcelable interface (id, title, description and previewPath only)
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(this.mId);
+        dest.writeString(this.mTitle);
+        dest.writeString(this.mDescription);
+        dest.writeString(this.mFullSizePhotoPath);
+        dest.writeString(this.mPreviewPath);
+        dest.writeString(this.mThumbnailPath);
+        dest.writeInt(this.mFavourite);
+    }
+
+    protected PhotoItem(Parcel in) {
+        this.mId = in.readLong();
+        this.mTitle = in.readString();
+        this.mDescription = in.readString();
+        this.mFullSizePhotoPath = in.readString();
+        this.mPreviewPath = in.readString();
+        this.mThumbnailPath = in.readString();
+        this.mFavourite = in.readInt();
+    }
+
+    public static final Creator<PhotoItem> CREATOR = new Creator<PhotoItem>() {
+        @Override
+        public PhotoItem createFromParcel(Parcel source) {
+            return new PhotoItem(source);
+        }
+
+        @Override
+        public PhotoItem[] newArray(int size) {
+            return new PhotoItem[size];
+        }
+    };
+
 
 }

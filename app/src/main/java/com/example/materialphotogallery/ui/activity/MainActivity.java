@@ -18,6 +18,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -39,6 +40,7 @@ import com.example.materialphotogallery.ui.fragment.HomeFragment;
 import com.example.materialphotogallery.ui.fragment.ModelFragment;
 import com.example.materialphotogallery.ui.fragment.PhotoMapFragment;
 import com.example.materialphotogallery.ui.fragment.SettingsFragment;
+import com.example.materialphotogallery.ui.fragment.SlideShowFragment;
 
 import java.util.List;
 
@@ -60,11 +62,10 @@ public class MainActivity extends AppCompatActivity implements
     // Contract methods
     @Override
     public void onHomeItemClick(List<PhotoItem> list, int position) {
-        // TODO launch SlideShowFragment
-        Utils.showSnackbar(mLayout, "Clicked item: " + position + ", list size: " + list.size());
-        for (PhotoItem item : list) {
-            Timber.i("%s: item: %s", Constants.LOG_TAG, item.toString());
-        }
+        // launch SlideShowFragment
+        SlideShowFragment fragment = SlideShowFragment.newInstance(list, position);
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        fragment.show(ft, "slide_show");
     }
     // END
 
@@ -100,7 +101,7 @@ public class MainActivity extends AppCompatActivity implements
     private NavigationView mNavigationView;
     private String mCurrentTitle;
     private String mFullSizePhotoPath;
-    private List<PhotoItem> mSlideShowList;
+    //private List<PhotoItem> mSlideShowList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -221,7 +222,8 @@ public class MainActivity extends AppCompatActivity implements
         if (resultCode == RESULT_OK) {
             if (requestCode == PHOTO_REQUEST_CODE) {
                 // TODO capture title and description via material dialog
-                String title = "dummy";
+                long id = Utils.generateCustomId();
+                String title = "title: " + id;
                 String description = "string";
                 // generate scaled versions of the photo
                 String previewPath = Utils.generatePreviewImage(mFullSizePhotoPath, 1400, 1400);
@@ -229,7 +231,8 @@ public class MainActivity extends AppCompatActivity implements
 
                 // insert record into database
                 ContentValues cv = Utils.setContentValues(
-                        Utils.generateCustomId(),
+                        //Utils.generateCustomId(),
+                        id, // FIXME
                         title,
                         description,
                         mFullSizePhotoPath,

@@ -148,7 +148,6 @@ public class HomeFragment extends ContractFragment<HomeFragment.Contract>
         mRecyclerView.scheduleLayoutAnimation();
     }
 
-
     private Cursor mCursor;
     private CustomRecyclerView mRecyclerView;
     private CustomRecyclerViewAdapter mAdapter;
