@@ -34,6 +34,7 @@ import com.example.materialphotogallery.custom.CustomMultiChoiceCursorRecyclerVi
 import com.example.materialphotogallery.custom.CustomRecyclerView;
 import com.example.materialphotogallery.custom.MultiChoiceModeListener;
 import com.example.materialphotogallery.event.ModelLoadedEvent;
+import com.example.materialphotogallery.model.PhotoItem;
 import com.example.materialphotogallery.thread.DeleteFilesFromStorageThread;
 import com.example.materialphotogallery.thread.DeleteItemsThread;
 import com.example.materialphotogallery.thread.UpdateItemsThread;
@@ -139,13 +140,14 @@ public class HomeFragment extends ContractFragment<HomeFragment.Contract>
 
     public interface Contract {
         // handle ViewHolder.OnClick()
-        void onHomeItemClick(long id);
+        void onHomeItemClick(List<PhotoItem> list, int position);
     }
 
     public void onEnterAnimationComplete() {
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.scheduleLayoutAnimation();
     }
+
 
     private Cursor mCursor;
     private CustomRecyclerView mRecyclerView;
@@ -232,7 +234,8 @@ public class HomeFragment extends ContractFragment<HomeFragment.Contract>
 //        }
 
         // pass the retrieved cursor to the adapter
-        mAdapter.changeCursor(event.getModel());
+        mCursor = event.getModel();
+        mAdapter.changeCursor(mCursor);
         showHideEmpty();
     }
 
@@ -243,6 +246,28 @@ public class HomeFragment extends ContractFragment<HomeFragment.Contract>
         } else {
             mEmptyView.setVisibility(View.VISIBLE);
         }
+    }
+
+    private List<PhotoItem> getPhotoItemList() {
+        List<PhotoItem> list = new ArrayList<>();
+        if (mCursor != null) {
+            if (mCursor.isLast() || mCursor.isAfterLast()) {
+                mCursor.moveToFirst();
+            }
+            do {
+                long id = mCursor.getLong(mCursor.getColumnIndex(Constants.PHOTO_ID));
+                String title = mCursor.getString(mCursor.getColumnIndex(Constants.PHOTO_TITLE));
+                String description = mCursor.getString(mCursor.getColumnIndex(Constants.PHOTO_DESCRIPTION));
+                String previewPath = mCursor.getString(mCursor.getColumnIndex(Constants.PHOTO_PREVIEW_PATH));
+                PhotoItem item = new PhotoItem();
+                item.setId(id);
+                item.setTitle(title);
+                item.setDescription(description);
+                item.setPreviewPath(previewPath);
+                list.add(item);
+            } while (mCursor.moveToNext());
+        }
+        return list;
     }
 
     private String[] getPhotosForDeletion(Cursor cursor, SparseBooleanArray selectedItems) {
@@ -296,6 +321,7 @@ public class HomeFragment extends ContractFragment<HomeFragment.Contract>
             }
         }
 
+
     }
 
     public class CustomViewHolder extends RecyclerView.ViewHolder
@@ -327,7 +353,7 @@ public class HomeFragment extends ContractFragment<HomeFragment.Contract>
             if (mAdapter.isActionModeActive()) {
                 mAdapter.toggleSelected(getAdapterPosition());
             } else {
-                getContract().onHomeItemClick(mId);
+                getContract().onHomeItemClick(getPhotoItemList(), getAdapterPosition());
             }
         }
 

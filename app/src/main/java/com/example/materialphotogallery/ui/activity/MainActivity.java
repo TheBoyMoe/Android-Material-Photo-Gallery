@@ -31,6 +31,7 @@ import android.view.View;
 import com.example.materialphotogallery.R;
 import com.example.materialphotogallery.common.Constants;
 import com.example.materialphotogallery.common.Utils;
+import com.example.materialphotogallery.model.PhotoItem;
 import com.example.materialphotogallery.thread.InsertItemThread;
 import com.example.materialphotogallery.ui.fragment.AboutFragment;
 import com.example.materialphotogallery.ui.fragment.FavouriteFragment;
@@ -58,9 +59,12 @@ public class MainActivity extends AppCompatActivity implements
 
     // Contract methods
     @Override
-    public void onHomeItemClick(int position) {
+    public void onHomeItemClick(List<PhotoItem> list, int position) {
         // TODO launch SlideShowFragment
-        Utils.showSnackbar(mLayout, "Clicked item: " + position);
+        Utils.showSnackbar(mLayout, "Clicked item: " + position + ", list size: " + list.size());
+        for (PhotoItem item : list) {
+            Timber.i("%s: item: %s", Constants.LOG_TAG, item.toString());
+        }
     }
     // END
 
@@ -96,6 +100,7 @@ public class MainActivity extends AppCompatActivity implements
     private NavigationView mNavigationView;
     private String mCurrentTitle;
     private String mFullSizePhotoPath;
+    private List<PhotoItem> mSlideShowList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -137,7 +142,9 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onEnterAnimationComplete() {
+        // ONLY CALLED IN API21+
         super.onEnterAnimationComplete();
+        Timber.i("%s: onEnterAnimation() called", Constants.LOG_TAG);
         FragmentManager fm = getSupportFragmentManager();
         List<Fragment> list = fm.getFragments();
         if (list.size() == 1) { // home fragment is top of stack/visible
@@ -214,8 +221,8 @@ public class MainActivity extends AppCompatActivity implements
         if (resultCode == RESULT_OK) {
             if (requestCode == PHOTO_REQUEST_CODE) {
                 // TODO capture title and description via material dialog
-                String title = "";
-                String description = "";
+                String title = "dummy";
+                String description = "string";
                 // generate scaled versions of the photo
                 String previewPath = Utils.generatePreviewImage(mFullSizePhotoPath, 1400, 1400);
                 String thumbnailPath = Utils.generateThumbnailImage(mFullSizePhotoPath, 300, 300);
@@ -334,11 +341,14 @@ public class MainActivity extends AppCompatActivity implements
         int count = fm.getBackStackEntryCount();
         if (count > 1 && fragmentClass == HomeFragment.class) {
             fm.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+            //if (fragment != null) {
+            //    mSlideShowList = ((HomeFragment) fragment).setDataModel();
+            //    Timber.i("%s: slide show size: %d", Constants.LOG_TAG, mSlideShowList.size());
+            //}
         }
 
         // replacing the existing fragment
         fm.beginTransaction()
-                //.replace(R.id.fragment_container, fragment)
                 .replace(R.id.fragment_container, fragment, tag)
                 .addToBackStack(mCurrentTitle)
                 .commit();
@@ -378,9 +388,9 @@ public class MainActivity extends AppCompatActivity implements
     private void displayInitialFragment() {
         mCurrentTitle = getString(R.string.menu_title_home);
         setTitle(mCurrentTitle);
-
+        HomeFragment fragment = HomeFragment.newInstance();
         getSupportFragmentManager().beginTransaction()
-                .add(R.id.fragment_container, HomeFragment.newInstance(), HOME_FRAGMENT)
+                .add(R.id.fragment_container, fragment, HOME_FRAGMENT)
                 .addToBackStack(mCurrentTitle)
                 .commit();
     }

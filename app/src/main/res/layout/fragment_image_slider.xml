@@ -1,7 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:background="@color/colorPrimaryBackground"
               android:layout_width="match_parent"
               android:layout_height="match_parent">
 
-</LinearLayout>
+    <android.support.v4.view.ViewPager
+        android:id="@+id/view_pager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+   <TextView
+       android:id="@+id/image_count"
+       style="@style/TextStyle.PreviewCount"
+       android:layout_alignParentTop="true"
+       android:layout_marginTop="@dimen/normal"
+       android:layout_centerHorizontal="true"/>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="@dimen/large"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/image_title"
+            style="@style/TextStyle.PreviewCount"/>
+
+        <TextView
+            android:id="@+id/image_description"
+            style="@style/TextStyle.PreviewCount"/>
+
+    </LinearLayout>
+
+
+</RelativeLayout>

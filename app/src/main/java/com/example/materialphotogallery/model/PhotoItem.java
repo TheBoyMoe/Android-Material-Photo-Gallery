@@ -70,7 +70,7 @@ public class PhotoItem {
 
     @Override
     public String toString() {
-        return String.format(Locale.ENGLISH, "Id: %d, path: %s", getId(), getFullSizePhotoPath());
+        return String.format(Locale.ENGLISH, "Id: %d, previewPath: %s", getId(), getPreviewPath());
     }
 
 }
