@@ -33,6 +33,8 @@ public class DatabaseHelper extends SQLiteOpenHelper{
         db.execSQL("CREATE TABLE " + Constants.TABLE + "("
                 + "_id INTEGER PRIMARY KEY, "
                 + Constants.PHOTO_ID + " INTEGER, "
+                + Constants.PHOTO_TITLE + " TEXT, "
+                + Constants.PHOTO_DESCRIPTION + " TEXT, "
                 + Constants.PHOTO_FILE_PATH + " TEXT, "
                 + Constants.PHOTO_PREVIEW_PATH + " TEXT, "
                 + Constants.PHOTO_THUMBNAIL_PATH + " TEXT, "

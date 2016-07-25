@@ -5,10 +5,28 @@ import java.util.Locale;
 public class PhotoItem {
 
     private long mId;
+    private String mTitle;
+    private String mDescription;
     private String mFullSizePhotoPath;
     private String mPreviewPath;
     private String mThumbnailPath;
     private int mFavourite;
+
+    public String getTitle() {
+        return mTitle;
+    }
+
+    public void setTitle(String title) {
+        mTitle = title;
+    }
+
+    public String getDescription() {
+        return mDescription;
+    }
+
+    public void setDescription(String description) {
+        mDescription = description;
+    }
 
     public int getFavourite() {
         return mFavourite;
@@ -54,4 +72,5 @@ public class PhotoItem {
     public String toString() {
         return String.format(Locale.ENGLISH, "Id: %d, path: %s", getId(), getFullSizePhotoPath());
     }
+
 }

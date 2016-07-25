@@ -6,6 +6,8 @@ public class Constants {
 
     public static final String TABLE = "photos";
     public static final String PHOTO_ID = "photo_id";
+    public static final String PHOTO_TITLE = "title";
+    public static final String PHOTO_DESCRIPTION = "description";
     public static final String PHOTO_FILE_PATH = "file_path";
     public static final String PHOTO_PREVIEW_PATH = "preview_path";
     public static final String PHOTO_THUMBNAIL_PATH = "thumbnail_path";

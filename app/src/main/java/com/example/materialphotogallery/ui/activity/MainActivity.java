@@ -58,8 +58,9 @@ public class MainActivity extends AppCompatActivity implements
 
     // Contract methods
     @Override
-    public void onHomeItemClick(long id) {
-        Utils.showSnackbar(mLayout, "Clicked item: " + id);
+    public void onHomeItemClick(int position) {
+        // TODO launch SlideShowFragment
+        Utils.showSnackbar(mLayout, "Clicked item: " + position);
     }
     // END
 
@@ -212,6 +213,9 @@ public class MainActivity extends AppCompatActivity implements
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
             if (requestCode == PHOTO_REQUEST_CODE) {
+                // TODO capture title and description via material dialog
+                String title = "";
+                String description = "";
                 // generate scaled versions of the photo
                 String previewPath = Utils.generatePreviewImage(mFullSizePhotoPath, 1400, 1400);
                 String thumbnailPath = Utils.generateThumbnailImage(mFullSizePhotoPath, 300, 300);
@@ -219,6 +223,8 @@ public class MainActivity extends AppCompatActivity implements
                 // insert record into database
                 ContentValues cv = Utils.setContentValues(
                         Utils.generateCustomId(),
+                        title,
+                        description,
                         mFullSizePhotoPath,
                         previewPath,
                         thumbnailPath,
