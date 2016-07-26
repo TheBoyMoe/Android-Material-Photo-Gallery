@@ -25,10 +25,13 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.InputType;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.example.materialphotogallery.R;
 import com.example.materialphotogallery.common.Constants;
 import com.example.materialphotogallery.common.Utils;
@@ -222,25 +225,29 @@ public class MainActivity extends AppCompatActivity implements
         if (resultCode == RESULT_OK) {
             if (requestCode == PHOTO_REQUEST_CODE) {
                 // TODO capture title and description via material dialog
-                long id = Utils.generateCustomId();
-                String title = "title: " + id;
-                String description = "string";
-                // generate scaled versions of the photo
-                String previewPath = Utils.generatePreviewImage(mFullSizePhotoPath, 1400, 1400);
-                String thumbnailPath = Utils.generateThumbnailImage(mFullSizePhotoPath, 300, 300);
+                new MaterialDialog.Builder(this)
+                        .title("Add a title (optional)")
+                        .inputType(InputType.TYPE_CLASS_TEXT)
+                        .inputRange(2, 100)
+                        .input(null, null, false, new MaterialDialog.InputCallback() {
+                            @Override
+                            public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
+                                if (input.toString().length() > 2) {
+                                    saveItemToDisk(input.toString());
+                                }
+                            }
+                        })
+                        .onNegative(new MaterialDialog.SingleButtonCallback() {
+                            @Override
+                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                saveItemToDisk("");
+                            }
+                        })
+                        .positiveText("Agree")
+                        .negativeText("Cancel")
+                        .show();
 
-                // insert record into database
-                ContentValues cv = Utils.setContentValues(
-                        //Utils.generateCustomId(),
-                        id, // FIXME
-                        title,
-                        description,
-                        mFullSizePhotoPath,
-                        previewPath,
-                        thumbnailPath,
-                        0 // sqlite does not accept booleans, use 0 for false, 1 for true
-                );
-                new InsertItemThread(this, cv).start();
+
             }
         } else if (resultCode == RESULT_CANCELED){
             Utils.showSnackbar(mLayout, "Operation cancelled by user");
@@ -266,6 +273,24 @@ public class MainActivity extends AppCompatActivity implements
         if (permissionNotGiven) {
             Utils.showSnackbar(mLayout, "Use of the camera requires accepting the requested permission");
         }
+    }
+
+    private void saveItemToDisk(String title) {
+        String description = "";
+        // generate scaled versions of the photo
+        String previewPath = Utils.generatePreviewImage(mFullSizePhotoPath, 1400, 1400); //FIXME
+        String thumbnailPath = Utils.generateThumbnailImage(mFullSizePhotoPath, 300, 300);
+        // insert record into database
+        ContentValues cv = Utils.setContentValues(
+                Utils.generateCustomId(),
+                title,
+                description,
+                mFullSizePhotoPath,
+                previewPath,
+                thumbnailPath,
+                0 // sqlite does not accept booleans, use 0 for false, 1 for true
+        );
+        new InsertItemThread(MainActivity.this, cv).start();
     }
 
     private void setupDrawerLayout() {
