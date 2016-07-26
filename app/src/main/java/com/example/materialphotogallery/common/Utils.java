@@ -25,6 +25,8 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.materialphotogallery.R;
 import com.example.materialphotogallery.event.ModelLoadedEvent;
 import com.example.materialphotogallery.model.DatabaseHelper;
@@ -253,6 +255,15 @@ public class Utils {
                 .load(new File(previewPath))
                 .fit() // scale image to fit image view element - also scales the placeholder
                 .centerInside()
+                .into(view);
+    }
+
+    public static void loadPreviewWithGlide(Context context, String previewPath, ImageView view) {
+        Glide.with(context)
+                .load(previewPath)
+                .crossFade()
+                .fitCenter()
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(view);
     }
 

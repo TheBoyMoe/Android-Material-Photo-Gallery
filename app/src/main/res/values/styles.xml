@@ -74,6 +74,7 @@
     </style>
 
     <style name="TextStyle.PlaceHolder">
+        <item name="android:textColor">@color/colorInverseText</item>
         <item name="android:textSize">26sp</item>
         <item name="android:padding">@dimen/normal</item>
     </style>

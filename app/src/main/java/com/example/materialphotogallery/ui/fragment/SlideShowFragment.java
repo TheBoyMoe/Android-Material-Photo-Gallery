@@ -113,7 +113,8 @@ public class SlideShowFragment extends DialogFragment{
             View view = inflater.inflate(R.layout.fullscreen_image_view, container, false);
             ImageView preview = (ImageView) view.findViewById(R.id.image_preview);
             PhotoItem item = mList.get(position);
-            Utils.loadPreviewWithPicasso(getActivity(), item.getPreviewPath(), preview);
+            // Utils.loadPreviewWithPicasso(getActivity(), item.getPreviewPath(), preview);
+            Utils.loadPreviewWithGlide(getActivity(), item.getPreviewPath(), preview);
             container.addView(view);
             return view;
         }
