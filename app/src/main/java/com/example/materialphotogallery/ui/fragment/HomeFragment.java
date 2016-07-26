@@ -316,11 +316,9 @@ public class HomeFragment extends ContractFragment<HomeFragment.Contract>
                 int position = cursor.getPosition();
                 viewHolder.itemView.setBackgroundColor(ContextCompat.getColor(
                         getActivity(), isSelected(position) ?
-                            R.color.colorSelectedBackground : R.color.colorSecondaryBackground));
+                            R.color.colorSelectedBackground : R.color.colorPrimaryBackground));
             }
         }
-
-
     }
 
     public class CustomViewHolder extends RecyclerView.ViewHolder

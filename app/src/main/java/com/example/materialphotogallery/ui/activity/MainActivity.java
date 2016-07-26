@@ -100,7 +100,7 @@ public class MainActivity extends AppCompatActivity implements
     private NavigationView mNavigationView;
     private String mCurrentTitle;
     private String mFullSizePhotoPath;
-    //private List<PhotoItem> mSlideShowList;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -7,6 +7,7 @@ import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -35,7 +36,7 @@ public class CustomDialogFragment extends DialogFragment implements View.OnClick
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.custom_dialog, container, false);
-        getDialog().setTitle(R.string.dialog_title);
+        getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE); // remove title, add title via xml
         mFullFilePath = getArguments().getString(Constants.PHOTO_FILE_PATH);
         return view;
     }
