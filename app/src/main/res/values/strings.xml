@@ -13,5 +13,8 @@
     <string name="empty_text_view_label">No items to show</string>
     <string name="snackbar_action_title">Change app permissions</string>
     <string name="snackbar_action_text">Enable required permission</string>
+    <string name="dialog_title">Add a title (optional)</string>
+    <string name="dialog_positive_btn_text">Submit</string>
+    <string name="dialog_negative_btn_text">Cancel</string>
 
 </resources>
