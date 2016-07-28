@@ -1,15 +1,25 @@
 package com.example.materialphotogallery.ui.fragment;
 
+import android.database.Cursor;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.materialphotogallery.common.Constants;
+import com.example.materialphotogallery.model.DatabaseHelper;
+import com.example.materialphotogallery.model.PhotoItem;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import timber.log.Timber;
 
 public class PhotoMapFragment extends SupportMapFragment implements
         OnMapReadyCallback,
@@ -17,13 +27,13 @@ public class PhotoMapFragment extends SupportMapFragment implements
         GoogleMap.OnMapClickListener{
 
     private View mMapView;
+    private List<PhotoItem> mList;
 
     public PhotoMapFragment() {}
 
     public static PhotoMapFragment newInstance() {
         PhotoMapFragment fragment = new PhotoMapFragment();
         Bundle args = new Bundle();
-        // TODO
         fragment.setArguments(args);
 
         return fragment;
@@ -37,9 +47,15 @@ public class PhotoMapFragment extends SupportMapFragment implements
     }
 
     @Override
+    public void onActivityCreated(Bundle bundle) {
+        super.onActivityCreated(bundle);
+        getMapAsync(this); // ensure that onMapReady is called
+    }
+
+    @Override
     public void onMapReady(GoogleMap googleMap) {
         // TODO add markers to the map
-
+        new QueryPhotoItemsTask().execute();
 
         // TODO center and zoom map to encompass markers
 
@@ -55,6 +71,43 @@ public class PhotoMapFragment extends SupportMapFragment implements
     @Override
     public boolean onMarkerClick(Marker marker) {
         return false;
+    }
+
+
+    // load database items
+    private class QueryPhotoItemsTask extends AsyncTask<Void, Void, List<PhotoItem>> {
+
+        Cursor results;
+        List<PhotoItem> items = new ArrayList<>();
+        PhotoItem item = new PhotoItem();
+
+        @Override
+        protected List<PhotoItem> doInBackground(Void... voids) {
+            try {
+                // query the database, returning all records
+                results = DatabaseHelper.getInstance(getActivity()).loadItems(getActivity());
+            } catch (Exception e) {
+                Timber.e("%s: error loading items from dbase, %s", Constants.LOG_TAG, e.getMessage());
+            }
+            if (results != null && results.moveToFirst()) {
+                do {
+                    item.setId(results.getLong(results.getColumnIndex(Constants.PHOTO_ID)));
+                    item.setTitle(results.getString(results.getColumnIndex(Constants.PHOTO_TITLE)));
+                    item.setLatitude(results.getDouble(results.getColumnIndex(Constants.PHOTO_LATITUDE)));
+                    item.setLongitude(results.getDouble(results.getColumnIndex(Constants.PHOTO_LONGITUDE)));
+                    items.add(item);
+                } while(results.moveToNext());
+            }
+
+            return items;
+        }
+
+        @Override
+        protected void onPostExecute(List<PhotoItem> photoItems) {
+            super.onPostExecute(photoItems);
+            mList = photoItems;
+            Timber.i("%s: count: %d", Constants.LOG_TAG, mList.size());
+        }
     }
 
 
