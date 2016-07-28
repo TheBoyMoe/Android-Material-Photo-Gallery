@@ -82,8 +82,8 @@ public class CustomDialogFragment extends DialogFragment implements View.OnClick
                 previewPath,
                 thumbnailPath,
                 0, // sqlite does not accept booleans, use 0 for false, 1 for true
-                0.0, // FIXME dummy lat/lng values
-                0.0
+                51.520721, // FIXME dummy lat/lng values
+                -0.151676
         );
         new InsertItemThread(getActivity(), cv).start();
     }
