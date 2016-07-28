@@ -255,6 +255,14 @@ public class Utils {
         return cv;
     }
 
+    public static void loadThumbnailWithPicasso(Context context, String thumbnailPath, ImageView view) {
+                    Picasso.with(context)
+                    .load(new File(thumbnailPath))
+                    .fit()
+                    .centerCrop()
+                    .into(view);
+    }
+
     public static void loadPreviewWithPicasso(Context context, String previewPath, ImageView view) {
         Picasso.with(context)
                 .load(new File(previewPath))
@@ -268,6 +276,15 @@ public class Utils {
                 .load(previewPath)
                 .crossFade()
                 .fitCenter()
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .into(view);
+    }
+
+    public static void loadThumbnailWithGlide(Context context, String previewPath, ImageView view) {
+        Glide.with(context)
+                .load(previewPath)
+                .crossFade()
+                .centerCrop()
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(view);
     }

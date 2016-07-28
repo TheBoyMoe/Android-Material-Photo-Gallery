@@ -38,9 +38,7 @@ import com.example.materialphotogallery.model.PhotoItem;
 import com.example.materialphotogallery.thread.DeleteFilesFromStorageThread;
 import com.example.materialphotogallery.thread.DeleteItemsThread;
 import com.example.materialphotogallery.thread.UpdateItemsThread;
-import com.squareup.picasso.Picasso;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -344,11 +342,7 @@ public class HomeFragment extends ContractFragment<HomeFragment.Contract>
         public void bindViewHolder(Cursor cursor) {
             mId = cursor.getLong(cursor.getColumnIndex(Constants.PHOTO_ID));
             mThumbnailPath = cursor.getString(cursor.getColumnIndex(Constants.PHOTO_THUMBNAIL_PATH));
-            Picasso.with(getActivity())
-                    .load(new File(mThumbnailPath))
-                    .fit()
-                    .centerCrop()
-                    .into(mImageView);
+            Utils.loadThumbnailWithGlide(getActivity(), mThumbnailPath, mImageView);
         }
 
         @Override
