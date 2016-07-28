@@ -1,4 +1,5 @@
 <resources>
+
     <string name="app_name">MaterialPhotoGallery</string>
     <string name="menu_title_home">Photo Gallery</string>
     <string name="menu_title_favourite">Favourites</string>
@@ -16,5 +17,7 @@
     <string name="dialog_title">Add a title (optional)</string>
     <string name="dialog_positive_btn_text">Submit</string>
     <string name="dialog_negative_btn_text">Cancel</string>
+    <string name="maps_not_supported">Google Maps not available</string>
+    <string name="google_map_api_key">AIzaSyADn7uvvWJSPddRq8FDUpyxUFt1F_pTOfY</string>
 
 </resources>

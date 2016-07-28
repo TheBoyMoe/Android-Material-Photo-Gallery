@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.FeatureInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.database.Cursor;
@@ -30,6 +31,8 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.materialphotogallery.R;
 import com.example.materialphotogallery.event.ModelLoadedEvent;
 import com.example.materialphotogallery.model.DatabaseHelper;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
@@ -267,6 +270,51 @@ public class Utils {
                 .fitCenter()
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(view);
+    }
+
+    // Mapping Utilities
+    public static boolean servicesAvailable(Activity activity, View layout) {
+        GoogleApiAvailability googleApi = GoogleApiAvailability.getInstance();
+        int isAvailable = googleApi.isGooglePlayServicesAvailable(activity);
+        if (isAvailable == ConnectionResult.SUCCESS) {
+            return true;
+        }
+//        else if (googleApi.isUserResolvableError(isAvailable)) {
+//            Dialog dialog = googleApi.getErrorDialog(activity, isAvailable, Constants.ERROR_DIALOG_REQUEST);
+//            dialog.show();
+//        }
+        else {
+            // user can't do anything about the error
+            showSnackbar(layout, "Can't connect to mapping service");
+        }
+        return false;
+    }
+
+    // https://android.googlesource.com/platform/cts/+/master/tests/tests/graphics/src/android/opengl/cts/OpenGlEsVersionTest.java
+    public static int getVersionFromPackageManager(Context context) {
+        PackageManager packageManager = context.getPackageManager();
+        FeatureInfo[] featureInfos =
+                packageManager.getSystemAvailableFeatures();
+        if (featureInfos != null && featureInfos.length > 0) {
+            for (FeatureInfo featureInfo : featureInfos) {
+                // Null feature name means this feature is the open
+                // gl es version feature.
+                if (featureInfo.name == null) {
+                    if (featureInfo.reqGlEsVersion != FeatureInfo.GL_ES_VERSION_UNDEFINED) {
+                        return getMajorVersion(featureInfo.reqGlEsVersion);
+                    } else {
+                        return 1; // Lack of property means OpenGL ES
+                        // version 1
+                    }
+                }
+            }
+        }
+        return 1;
+    }
+
+    /** @see FeatureInfo#getGlEsVersion() */
+    private static int getMajorVersion(int glEsVersion) {
+        return ((glEsVersion & 0xffff0000) >> 16);
     }
 
 }

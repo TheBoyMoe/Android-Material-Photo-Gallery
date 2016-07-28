@@ -15,4 +15,6 @@ public class Constants {
     public static final String PHOTO_LATITUDE = "latitude";
     public static final String PHOTO_LONGITUDE = "longitude";
 
+    public static final int ERROR_DIALOG_REQUEST = 101;
+
 }

@@ -38,6 +38,7 @@ import com.example.materialphotogallery.ui.fragment.FavouriteFragment;
 import com.example.materialphotogallery.ui.fragment.HomeFragment;
 import com.example.materialphotogallery.ui.fragment.ModelFragment;
 import com.example.materialphotogallery.ui.fragment.PhotoMapFragment;
+import com.example.materialphotogallery.ui.fragment.PlaceholderMapFragment;
 import com.example.materialphotogallery.ui.fragment.SettingsFragment;
 import com.example.materialphotogallery.ui.fragment.SlideShowFragment;
 
@@ -55,8 +56,7 @@ import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
  */
 public class MainActivity extends AppCompatActivity implements
         HomeFragment.Contract,
-        FavouriteFragment.Contract,
-        PhotoMapFragment.Contract{
+        FavouriteFragment.Contract {
 
     // Contract methods
     @Override
@@ -278,7 +278,12 @@ public class MainActivity extends AppCompatActivity implements
                 tag = FAVOURITE_FRAGMENT;
                 break;
             case R.id.drawer_map:
-                fragmentClass = PhotoMapFragment.class;
+                if (Utils.servicesAvailable(this, mLayout) &&
+                        Utils.getVersionFromPackageManager(this) >= 2) {
+                    fragmentClass = PhotoMapFragment.class;
+                } else {
+                    fragmentClass = PlaceholderMapFragment.class;
+                }
                 tag = PHOTO_MAP_FRAGMENT;
                 break;
             case R.id.drawer_settings:
@@ -294,6 +299,7 @@ public class MainActivity extends AppCompatActivity implements
                 tag = HOME_FRAGMENT;
         }
         try {
+            // TODO pass in array of photo items into
             fragment = (Fragment) fragmentClass.newInstance();
         } catch (Exception e) {
             Timber.e("%s: Could not instantiate %s fragment, %s",

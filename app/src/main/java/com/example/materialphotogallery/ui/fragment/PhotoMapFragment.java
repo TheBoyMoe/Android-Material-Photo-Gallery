@@ -1,41 +1,61 @@
 package com.example.materialphotogallery.ui.fragment;
 
-import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
-import com.example.materialphotogallery.R;
-import com.example.materialphotogallery.common.ContractFragment;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 
-public class PhotoMapFragment extends ContractFragment<PhotoMapFragment.Contract>{
+public class PhotoMapFragment extends SupportMapFragment implements
+        OnMapReadyCallback,
+        GoogleMap.OnMarkerClickListener,
+        GoogleMap.OnMapClickListener{
 
-    public interface Contract {
-        // TODO
-    }
+    private View mMapView;
 
-    public PhotoMapFragment(){}
+    public PhotoMapFragment() {}
 
     public static PhotoMapFragment newInstance() {
-        return new PhotoMapFragment();
+        PhotoMapFragment fragment = new PhotoMapFragment();
+        Bundle args = new Bundle();
+        // TODO
+        fragment.setArguments(args);
+
+        return fragment;
     }
 
-    @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.content_placeholder, container, false);
-        TextView tv = (TextView) view.findViewById(R.id.text_placeholder);
-        tv.setText(String.format("%s fragment", getString(R.string.menu_title_map)));
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        mMapView = super.onCreateView(inflater, container, savedInstanceState);
 
-        // hide the toolbar shadow on devices API 21+
-        View toolbarShadow = view.findViewById(R.id.toolbar_shadow);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            toolbarShadow.setVisibility(View.GONE);
-        }
-
-        return view;
+        return mMapView;
     }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        // TODO add markers to the map
+
+
+        // TODO center and zoom map to encompass markers
+
+
+        // TODO set onClick listeners
+    }
+
+    @Override
+    public void onMapClick(LatLng latLng) {
+
+    }
+
+    @Override
+    public boolean onMarkerClick(Marker marker) {
+        return false;
+    }
+
+
 }
