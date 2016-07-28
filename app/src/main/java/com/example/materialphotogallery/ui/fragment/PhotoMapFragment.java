@@ -11,6 +11,8 @@ import com.example.materialphotogallery.R;
 import com.example.materialphotogallery.common.Constants;
 import com.example.materialphotogallery.model.DatabaseHelper;
 import com.example.materialphotogallery.model.PhotoItem;
+import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -22,6 +24,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import timber.log.Timber;
 
@@ -59,14 +62,10 @@ public class PhotoMapFragment extends SupportMapFragment implements
     }
 
     @Override
-    public void onMapReady(GoogleMap googleMap) {
-        // TODO add markers to the map
+    public void onMapReady(final GoogleMap googleMap) {
+        // add markers to the map
         mMap = googleMap;
         new QueryPhotoItemsTask().execute();
-
-
-        // TODO center and zoom map to encompass markers
-
 
         // TODO set onClick listeners
     }
@@ -85,7 +84,8 @@ public class PhotoMapFragment extends SupportMapFragment implements
     private void addMarkers(GoogleMap map) {
 
         Marker marker = null;
-        for (PhotoItem item : mList) {
+        for (int i = 0; i < mList.size(); i++) {
+            PhotoItem item = mList.get(i);
             Timber.i("%s: id: %d, lat: %s, lng: %s",
                     Constants.LOG_TAG, item.getId(), item.getLatitude(), item.getLongitude());
             if (item.getLatitude() == 0.0 && item.getLongitude() == 0.0) {
@@ -93,7 +93,8 @@ public class PhotoMapFragment extends SupportMapFragment implements
             }
             marker = map.addMarker(new MarkerOptions()
                     .position(new LatLng(item.getLatitude(), item.getLongitude()))
-                    .title(item.getTitle())
+                    .title(String.format(Locale.ENGLISH, "%d/%d %s",
+                            i, mList.size(), item.getTitle()) )
                     .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_marker))
             );
             // add each marker to the LatLng object
@@ -137,6 +138,15 @@ public class PhotoMapFragment extends SupportMapFragment implements
             mList = photoItems;
             Timber.i("%s: items retrieved, count: %d", Constants.LOG_TAG, mList.size());
             addMarkers(mMap);
+
+            // center and zoom map to encompass markers
+            mMapView.post(new Runnable() {
+                @Override
+                public void run() {
+                    CameraUpdate locations = CameraUpdateFactory.newLatLngBounds(mBuilder.build(), 128);
+                    mMap.moveCamera(locations);
+                }
+            });
         }
     }
 
