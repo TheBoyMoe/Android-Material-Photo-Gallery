@@ -12,5 +12,7 @@ public class Constants {
     public static final String PHOTO_PREVIEW_PATH = "preview_path";
     public static final String PHOTO_THUMBNAIL_PATH = "thumbnail_path";
     public static final String PHOTO_FAVOURITE = "favourite";
+    public static final String PHOTO_LATITUDE = "latitude";
+    public static final String PHOTO_LONGITUDE = "longitude";
 
 }

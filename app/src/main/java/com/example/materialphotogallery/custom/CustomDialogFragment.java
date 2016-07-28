@@ -81,7 +81,9 @@ public class CustomDialogFragment extends DialogFragment implements View.OnClick
                 mFullFilePath,
                 previewPath,
                 thumbnailPath,
-                0 // sqlite does not accept booleans, use 0 for false, 1 for true
+                0, // sqlite does not accept booleans, use 0 for false, 1 for true
+                0.0, // FIXME dummy lat/lng values
+                0.0
         );
         new InsertItemThread(getActivity(), cv).start();
     }

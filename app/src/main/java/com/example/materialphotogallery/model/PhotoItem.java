@@ -14,8 +14,26 @@ public class PhotoItem implements Parcelable {
     private String mPreviewPath;
     private String mThumbnailPath;
     private int mFavourite;
+    private double mLatitude;
+    private double mLongitude;
 
     public PhotoItem() { }
+
+    public double getLatitude() {
+        return mLatitude;
+    }
+
+    public void setLatitude(double latitude) {
+        mLatitude = latitude;
+    }
+
+    public double getLongitude() {
+        return mLongitude;
+    }
+
+    public void setLongitude(double longitude) {
+        mLongitude = longitude;
+    }
 
     public String getTitle() {
         return mTitle;
@@ -93,6 +111,8 @@ public class PhotoItem implements Parcelable {
         dest.writeString(this.mPreviewPath);
         dest.writeString(this.mThumbnailPath);
         dest.writeInt(this.mFavourite);
+        dest.writeDouble(this.mLatitude);
+        dest.writeDouble(this.mLongitude);
     }
 
     protected PhotoItem(Parcel in) {
@@ -103,6 +123,8 @@ public class PhotoItem implements Parcelable {
         this.mPreviewPath = in.readString();
         this.mThumbnailPath = in.readString();
         this.mFavourite = in.readInt();
+        this.mLatitude = in.readDouble();
+        this.mLongitude = in.readDouble();
     }
 
     public static final Creator<PhotoItem> CREATOR = new Creator<PhotoItem>() {
@@ -116,6 +138,4 @@ public class PhotoItem implements Parcelable {
             return new PhotoItem[size];
         }
     };
-
-
 }

@@ -220,33 +220,10 @@ public class MainActivity extends AppCompatActivity implements
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
             if (requestCode == PHOTO_REQUEST_CODE) {
-                // capture title and description via material dialog
-//                new MaterialDialog.Builder(this)
-//                        .title("Add a title (optional)")
-//                        .inputType(InputType.TYPE_CLASS_TEXT)
-//                        .inputRange(2, 100)
-//                        .input(null, null, false, new MaterialDialog.InputCallback() {
-//                            @Override
-//                            public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
-//                                if (input.toString().length() > 2) {
-//                                    saveItemToDisk(input.toString());
-//                                }
-//                            }
-//                        })
-//                        .onNegative(new MaterialDialog.SingleButtonCallback() {
-//                            @Override
-//                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-//                                saveItemToDisk("");
-//                            }
-//                        })
-//                        .positiveText("Agree")
-//                        .negativeText("Cancel")
-//                        .show();
-
+                // capture title via dialog
                 FragmentManager fm = getSupportFragmentManager();
                 CustomDialogFragment dialog = CustomDialogFragment.newInstance(mFullSizePhotoPath);
                 dialog.show(fm, "dialog_fragment");
-
             }
         } else if (resultCode == RESULT_CANCELED){
             Utils.showSnackbar(mLayout, "Operation cancelled by user");
@@ -350,10 +327,6 @@ public class MainActivity extends AppCompatActivity implements
         int count = fm.getBackStackEntryCount();
         if (count > 1 && fragmentClass == HomeFragment.class) {
             fm.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-            //if (fragment != null) {
-            //    mSlideShowList = ((HomeFragment) fragment).setDataModel();
-            //    Timber.i("%s: slide show size: %d", Constants.LOG_TAG, mSlideShowList.size());
-            //}
         }
 
         // replacing the existing fragment
