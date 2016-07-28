@@ -28,6 +28,10 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.drew.imaging.ImageMetadataReader;
+import com.drew.imaging.ImageProcessingException;
+import com.drew.metadata.Metadata;
+import com.drew.metadata.exif.GpsDirectory;
 import com.example.materialphotogallery.R;
 import com.example.materialphotogallery.event.ModelLoadedEvent;
 import com.example.materialphotogallery.model.DatabaseHelper;
@@ -37,6 +41,7 @@ import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -332,6 +337,88 @@ public class Utils {
     /** @see FeatureInfo#getGlEsVersion() */
     private static int getMajorVersion(int glEsVersion) {
         return ((glEsVersion & 0xffff0000) >> 16);
+    }
+
+    // retrieve the image latitude from metadata
+    public static double getLatitude(String filePath) {
+
+        double latitude = 0.0;
+        try {
+            Metadata metadata = ImageMetadataReader.readMetadata(new File(filePath));
+
+            // get gps directory
+            GpsDirectory gpsDirectory = metadata.getDirectory(GpsDirectory.class);
+            String lat = gpsDirectory.getString(GpsDirectory.TAG_LATITUDE);
+            if (lat == null) return 0.0;
+
+            String latRef = gpsDirectory.getString(GpsDirectory.TAG_LATITUDE_REF);
+
+            // Latitude calculations
+            String[] latArray = lat.split(" ");
+
+            String[] a = latArray[0].split("/");
+            String[] b = latArray[1].split("/");
+            String[] c = latArray[2].split("/");
+
+            double lat1 = Double.valueOf(a[0]) / Double.valueOf(a[1]);
+            double lat2 = (Double.valueOf(b[0]) / Double.valueOf(b[1])) / 60;
+            double lat3 = (Double.valueOf(c[0]) / Double.valueOf(c[1])) / 3600;
+
+            String latSign = "";
+            if (latRef.equals("N")) {
+                latSign = "+";
+            } else {
+                latSign = "-";
+            }
+            //latitude =  latSign + String.valueOf(lat1 + lat2 + lat3);
+            String temp = latSign + (lat1 + lat2 + lat3);
+            latitude = Double.valueOf(temp);
+
+        } catch (IOException | ImageProcessingException e) {
+            Timber.e("%s: error fetching image latitude: %s", Constants.LOG_TAG, e.getMessage());
+        }
+        return latitude;
+    }
+
+    public static double getLongitude(String filePath) {
+
+        double longitude = 0.0;
+
+        try {
+            Metadata metadata = ImageMetadataReader.readMetadata(new File(filePath));
+
+            // get gps directory
+            GpsDirectory gpsDirectory = metadata.getDirectory(GpsDirectory.class);
+            String lng = gpsDirectory.getString(GpsDirectory.TAG_LONGITUDE);
+            if (lng == null) return 0.0;
+
+            String lngRef = gpsDirectory.getString(GpsDirectory.TAG_LONGITUDE_REF);
+
+            // Longitude calculations
+            String[] lngArray = lng.split(" ");
+
+            String[] d = lngArray[0].split("/");
+            String[] e = lngArray[1].split("/");
+            String[] f = lngArray[2].split("/");
+
+            double lng1 = Double.valueOf(d[0]) / Double.valueOf(d[1]);
+            double lng2 = (Double.valueOf(e[0]) / Double.valueOf(e[1])) / 60;
+            double lng3 = (Double.valueOf(f[0]) / Double.valueOf(f[1])) / 3600;
+
+            String lngSign = "";
+            if (lngRef.equals("E")) {
+                lngSign = "+";
+            } else {
+                lngSign = "-";
+            }
+            // longitude = lngSign + String.valueOf(lng1 + lng2 + lng3);
+            String temp = lngSign + (lng1 + lng2 + lng3);
+            longitude = Double.valueOf(temp);
+
+        } catch (IOException | ImageProcessingException e) {
+            Timber.e("%s: error fetching image longitude: %s", Constants.LOG_TAG, e.getMessage());
+        }
+        return longitude;
     }
 
 }

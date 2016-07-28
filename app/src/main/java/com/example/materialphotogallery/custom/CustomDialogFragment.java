@@ -73,6 +73,8 @@ public class CustomDialogFragment extends DialogFragment implements View.OnClick
         // generate scaled versions of the photo
         String previewPath = Utils.generatePreviewImage(mFullFilePath, 1400, 1400); //FIXME
         String thumbnailPath = Utils.generateThumbnailImage(mFullFilePath, 300, 300);
+        double latitude = Utils.getLatitude(mFullFilePath);
+        double longitude = Utils.getLongitude(mFullFilePath);
         // insert record into database
         ContentValues cv = Utils.setContentValues(
                 Utils.generateCustomId(),
@@ -82,8 +84,8 @@ public class CustomDialogFragment extends DialogFragment implements View.OnClick
                 previewPath,
                 thumbnailPath,
                 0, // sqlite does not accept booleans, use 0 for false, 1 for true
-                51.520721, // FIXME dummy lat/lng values
-                -0.151676
+                latitude,
+                longitude
         );
         new InsertItemThread(getActivity(), cv).start();
     }
