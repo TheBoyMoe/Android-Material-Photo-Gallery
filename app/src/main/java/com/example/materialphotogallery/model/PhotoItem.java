@@ -13,11 +13,20 @@ public class PhotoItem implements Parcelable {
     private String mFullSizePhotoPath;
     private String mPreviewPath;
     private String mThumbnailPath;
+    private String mSmallThumbPath;
     private int mFavourite;
     private double mLatitude;
     private double mLongitude;
 
     public PhotoItem() { }
+
+    public String getSmallThumbPath() {
+        return mSmallThumbPath;
+    }
+
+    public void setSmallThumbPath(String smallThumbPath) {
+        mSmallThumbPath = smallThumbPath;
+    }
 
     public double getLatitude() {
         return mLatitude;
@@ -110,6 +119,7 @@ public class PhotoItem implements Parcelable {
         dest.writeString(this.mFullSizePhotoPath);
         dest.writeString(this.mPreviewPath);
         dest.writeString(this.mThumbnailPath);
+        dest.writeString(this.mSmallThumbPath);
         dest.writeInt(this.mFavourite);
         dest.writeDouble(this.mLatitude);
         dest.writeDouble(this.mLongitude);
@@ -122,6 +132,7 @@ public class PhotoItem implements Parcelable {
         this.mFullSizePhotoPath = in.readString();
         this.mPreviewPath = in.readString();
         this.mThumbnailPath = in.readString();
+        this.mSmallThumbPath = in.readString();
         this.mFavourite = in.readInt();
         this.mLatitude = in.readDouble();
         this.mLongitude = in.readDouble();

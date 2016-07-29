@@ -123,6 +123,7 @@ public class PhotoMapFragment extends SupportMapFragment implements
                     item.setTitle(results.getString(results.getColumnIndex(Constants.PHOTO_TITLE)));
                     item.setLatitude(results.getDouble(results.getColumnIndex(Constants.PHOTO_LATITUDE)));
                     item.setLongitude(results.getDouble(results.getColumnIndex(Constants.PHOTO_LONGITUDE)));
+                    item.setSmallThumbPath(results.getString(results.getColumnIndex(Constants.PHOTO_SMALL_THUMB_PATH)));
                     items.add(item);
                 } while(results.moveToNext());
             }

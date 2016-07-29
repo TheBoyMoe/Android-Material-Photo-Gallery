@@ -189,11 +189,11 @@ public class Utils {
         return previewPath;
     }
 
-    public static String generateThumbnailImage(String filePath, int targetWidth, int targetHeight) {
+    public static String generateThumbnailImage(String filePath, String ext, int targetWidth, int targetHeight) {
 
         // generate thumbnail path
         String temp = filePath.substring(0, filePath.length() - 4); // strip off file ext
-        String thumbnailPath = temp + "_thumb.jpg";
+        String thumbnailPath = temp + ext;
 
 
         // Get the dimensions of the bitmap
@@ -239,7 +239,7 @@ public class Utils {
     }
 
     public static ContentValues setContentValues(long id, String title, String description,
-            String filePath, String previewPath, String thumbnailPath, int favourite, double latitude, double longitude) {
+            String filePath, String previewPath, String thumbnailPath, String smallThumbPath, int favourite, double latitude, double longitude) {
         ContentValues cv = new ContentValues();
         cv.put(Constants.PHOTO_ID, id);
         cv.put(Constants.PHOTO_TITLE, title);
@@ -247,6 +247,7 @@ public class Utils {
         cv.put(Constants.PHOTO_FILE_PATH, filePath);
         cv.put(Constants.PHOTO_PREVIEW_PATH, previewPath);
         cv.put(Constants.PHOTO_THUMBNAIL_PATH, thumbnailPath);
+        cv.put(Constants.PHOTO_SMALL_THUMB_PATH, smallThumbPath);
         cv.put(Constants.PHOTO_FAVOURITE, favourite);
         cv.put(Constants.PHOTO_LATITUDE, latitude);
         cv.put(Constants.PHOTO_LONGITUDE, longitude);

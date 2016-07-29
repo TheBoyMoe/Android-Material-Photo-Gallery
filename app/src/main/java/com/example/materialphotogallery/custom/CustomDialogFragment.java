@@ -71,8 +71,9 @@ public class CustomDialogFragment extends DialogFragment implements View.OnClick
     private void saveItemToDisk(String title) {
         String description = "";
         // generate scaled versions of the photo
-        String previewPath = Utils.generatePreviewImage(mFullFilePath, 1400, 1400); //FIXME
-        String thumbnailPath = Utils.generateThumbnailImage(mFullFilePath, 300, 300);
+        String previewPath = Utils.generatePreviewImage(mFullFilePath, 1200, 1200);
+        String thumbnailPath = Utils.generateThumbnailImage(mFullFilePath, Constants.PHOTO_THUMBNAIL_EXT, 300, 300);
+        String smallThumbPath = Utils.generateThumbnailImage(mFullFilePath, Constants.PHOTO_SMALL_EXT, 100, 100);
         double latitude = Utils.getLatitude(mFullFilePath);
         double longitude = Utils.getLongitude(mFullFilePath);
         // insert record into database
@@ -83,6 +84,7 @@ public class CustomDialogFragment extends DialogFragment implements View.OnClick
                 mFullFilePath,
                 previewPath,
                 thumbnailPath,
+                smallThumbPath,
                 0, // sqlite does not accept booleans, use 0 for false, 1 for true
                 latitude,
                 longitude
