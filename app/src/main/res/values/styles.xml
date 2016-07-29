@@ -99,5 +99,16 @@
         <item name="android:textSize">18sp</item>
     </style>
 
+    <style name="TextStyle.ImagePopup"/>
+
+    <style name="TextStyle.ImagePopup.Title">
+        <item name="android:textSize">20sp</item>
+        <item name="android:singleLine">true</item>
+    </style>
+
+    <style name="TextStyle.ImagePopup.Count">
+        <item name="android:textSize">18sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
 
 </resources>

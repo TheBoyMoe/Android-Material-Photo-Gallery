@@ -9,13 +9,13 @@ import android.view.ViewGroup;
 
 import com.example.materialphotogallery.R;
 import com.example.materialphotogallery.common.Constants;
+import com.example.materialphotogallery.common.ContractMapFragment;
 import com.example.materialphotogallery.model.DatabaseHelper;
 import com.example.materialphotogallery.model.PhotoItem;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
@@ -28,10 +28,15 @@ import java.util.Locale;
 
 import timber.log.Timber;
 
-public class PhotoMapFragment extends SupportMapFragment implements
+public class PhotoMapFragment extends ContractMapFragment<PhotoMapFragment.Contract> implements
         OnMapReadyCallback,
         GoogleMap.OnMarkerClickListener,
         GoogleMap.OnMapClickListener{
+
+    public interface Contract {
+        void onMarkerClick();
+        void onMapClick();
+    }
 
     private View mMapView;
     private List<PhotoItem> mList;
@@ -67,18 +72,22 @@ public class PhotoMapFragment extends SupportMapFragment implements
         mMap = googleMap;
         new QueryPhotoItemsTask().execute();
 
-        // TODO set onClick listeners
+        // set onClick listeners
+        mMap.setOnMarkerClickListener(this);
+        mMap.setOnMapClickListener(this);
     }
 
     @Override
     public void onMapClick(LatLng latLng) {
         // TODO
+        getContract().onMapClick();
     }
 
     @Override
     public boolean onMarkerClick(Marker marker) {
         // TODO
-        return false;
+        getContract().onMarkerClick();
+        return true;
     }
 
     private void addMarkers(GoogleMap map) {
@@ -102,7 +111,7 @@ public class PhotoMapFragment extends SupportMapFragment implements
     }
 
 
-    // load database items
+    // load all available items from the database
     private class QueryPhotoItemsTask extends AsyncTask<Void, Void, List<PhotoItem>> {
 
         Cursor results;
@@ -139,7 +148,7 @@ public class PhotoMapFragment extends SupportMapFragment implements
             addMarkers(mMap);
 
             // center and zoom map to encompass markers
-            mMapView.post(new Runnable() {
+            mMapView.post( new Runnable() {
                 @Override
                 public void run() {
                     CameraUpdate locations = CameraUpdateFactory.newLatLngBounds(mBuilder.build(), 128);

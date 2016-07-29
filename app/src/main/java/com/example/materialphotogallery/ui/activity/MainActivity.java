@@ -56,16 +56,28 @@ import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
  */
 public class MainActivity extends AppCompatActivity implements
         HomeFragment.Contract,
-        FavouriteFragment.Contract {
+        FavouriteFragment.Contract,
+        PhotoMapFragment.Contract{
 
 
-    // Contract methods
+    // Contract methods - home fragment
     @Override
     public void onHomeItemClick(List<PhotoItem> list, int position) {
         // launch SlideShowFragment
         SlideShowFragment fragment = SlideShowFragment.newInstance(list, position);
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         fragment.show(ft, "slide_show");
+    }
+
+    // - map fragment
+    @Override
+    public void onMarkerClick() {
+        Utils.showSnackbar(mLayout, "Clicked on marker");
+    }
+
+    @Override
+    public void onMapClick() {
+        Utils.showSnackbar(mLayout, "Clicked on map!");
     }
     // END
 

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:padding="@dimen/normal"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/image_thumbnail"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginRight="@dimen/normal"
+        android:layout_marginEnd="@dimen/normal"
+        android:layout_centerVertical="true"
+        android:layout_width="@dimen/small_thumbnail_size"
+        android:layout_height="@dimen/small_thumbnail_size"
+        tools:ignore="ContentDescription"/>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_centerVertical="true"
+        android:layout_toRightOf="@id/image_thumbnail"
+        android:layout_toEndOf="@id/image_thumbnail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/image_count"
+            tools:text="Image 2/5"
+            style="@style/TextStyle.ImagePopup.Count"/>
+
+        <TextView
+            android:id="@+id/image_title"
+            tools:text="Just another image title"
+            style="@style/TextStyle.ImagePopup.Title"/>
+
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/image_directions"
+        android:src="@drawable/ic_directions"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_width="@dimen/icon_size"
+        android:layout_height="@dimen/icon_size"
+        tools:ignore="ContentDescription"/>
+
+
+</RelativeLayout>
