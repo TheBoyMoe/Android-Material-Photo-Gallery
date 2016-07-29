@@ -94,7 +94,7 @@ public class PhotoMapFragment extends SupportMapFragment implements
             marker = map.addMarker(new MarkerOptions()
                     .position(new LatLng(item.getLatitude(), item.getLongitude()))
                     .title(String.format(Locale.ENGLISH, "%d/%d %s",
-                            i, mList.size(), item.getTitle()) )
+                            i + 1, mList.size(), item.getTitle()) )
                     .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_marker))
             );
             // add each marker to the LatLng object
