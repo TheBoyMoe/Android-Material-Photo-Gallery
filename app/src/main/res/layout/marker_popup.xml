@@ -24,6 +24,8 @@
         android:layout_centerVertical="true"
         android:layout_toRightOf="@id/popup_thumbnail"
         android:layout_toEndOf="@id/popup_thumbnail"
+        android:layout_marginEnd="@dimen/icon_size"
+        android:layout_marginRight="@dimen/icon_size"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
 

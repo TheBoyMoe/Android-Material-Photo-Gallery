@@ -43,6 +43,7 @@ import com.example.materialphotogallery.ui.fragment.PhotoMapFragment;
 import com.example.materialphotogallery.ui.fragment.PlaceholderMapFragment;
 import com.example.materialphotogallery.ui.fragment.SettingsFragment;
 import com.example.materialphotogallery.ui.fragment.SlideShowFragment;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 
 import java.util.List;
@@ -113,8 +114,7 @@ public class MainActivity extends AppCompatActivity implements
     private static final String CURRENT_PAGE_TITLE = "current_page_title";
     private static final String FULL_SIZE_PHOTO_PATH = "full_size_photo_path";
     private static final String FAB_VISIBILITY = "fab_visibility";
-    //private static final String PHOTO_PREVIEW_EXT = "_preview.jpg";
-    //private static final String PHOTO_THUMB_EXT = "_thumb.jpg";
+
 
     private static final int PHOTO_REQUEST_CODE = 100;
     private static final int PERMISSIONS_REQUEST_CODE = 101;
@@ -134,6 +134,7 @@ public class MainActivity extends AppCompatActivity implements
     private ImageView mPopupDirections;
     private TextView mPopupCount;
     private TextView mPopupTitle;
+    private LatLng mMarkerLatLng;
 
 
     @Override
@@ -441,11 +442,19 @@ public class MainActivity extends AppCompatActivity implements
 
         mMarkerPopup.animate().translationY(300.0f).alpha(0.0f);
         mIsPopupVisible = false;
+        // launch google maps to provide the user with directions to the provided coordinates
         mPopupDirections.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // TODO
-                Utils.showToast(MainActivity.this, "Do you need directions?");
+                if (mMarkerLatLng != null) {
+                    Uri uri = Uri.parse("google.navigation:q="
+                            + mMarkerLatLng.latitude + "," + mMarkerLatLng.longitude);
+                    Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                    intent.setPackage("com.google.android.apps.maps");
+                    if (intent.resolveActivity(MainActivity.this.getPackageManager()) != null) {
+                        startActivity(intent);
+                    }
+                }
             }
         });
     }
@@ -557,6 +566,7 @@ public class MainActivity extends AppCompatActivity implements
         mPopupCount.setText(String.format(Locale.ENGLISH, "Image %d/%d", Math.round(marker.getZIndex()), totalCount));
         mPopupTitle.setText(marker.getTitle());
         Utils.loadThumbnailWithGlide(this, marker.getSnippet(), mPopupThumb);
+        mMarkerLatLng =  marker.getPosition();
     }
 
     private void hidePopup() {
