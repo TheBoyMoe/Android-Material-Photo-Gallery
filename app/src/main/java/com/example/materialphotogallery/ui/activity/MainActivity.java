@@ -27,6 +27,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.example.materialphotogallery.R;
 import com.example.materialphotogallery.common.Constants;
@@ -41,8 +43,10 @@ import com.example.materialphotogallery.ui.fragment.PhotoMapFragment;
 import com.example.materialphotogallery.ui.fragment.PlaceholderMapFragment;
 import com.example.materialphotogallery.ui.fragment.SettingsFragment;
 import com.example.materialphotogallery.ui.fragment.SlideShowFragment;
+import com.google.android.gms.maps.model.Marker;
 
 import java.util.List;
+import java.util.Locale;
 
 import timber.log.Timber;
 
@@ -60,7 +64,8 @@ public class MainActivity extends AppCompatActivity implements
         PhotoMapFragment.Contract{
 
 
-    // Contract methods - home fragment
+    // Contract methods
+    // - home fragment
     @Override
     public void onHomeItemClick(List<PhotoItem> list, int position) {
         // launch SlideShowFragment
@@ -71,13 +76,16 @@ public class MainActivity extends AppCompatActivity implements
 
     // - map fragment
     @Override
-    public void onMarkerClick() {
-        Utils.showSnackbar(mLayout, "Clicked on marker");
+    public void onMarkerClick(Marker marker, int totalCount) {
+        populatePopup(marker, totalCount);
+
+        // TODO animate popup up
     }
 
     @Override
     public void onMapClick() {
-        Utils.showSnackbar(mLayout, "Clicked on map!");
+        // TODO animate popup down
+
     }
     // END
 
@@ -116,6 +124,12 @@ public class MainActivity extends AppCompatActivity implements
     private String mFullSizePhotoPath;
     private FloatingActionButton mFab;
     private boolean mIsFabVisible = true;
+    private View mMarkerPopup;
+    private boolean mIsPopupVisible;
+    private ImageView mPopupThumb;
+    private ImageView mPopupDirections;
+    private TextView mPopupCount;
+    private TextView mPopupTitle;
 
 
     @Override
@@ -127,6 +141,7 @@ public class MainActivity extends AppCompatActivity implements
 
         initToolbar();
         initFab();
+        initPopup();
         setupDrawerLayout();
 
         // set the initial fragment & title on startup
@@ -275,6 +290,7 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
+    // initialize various layout elements
     private void setupDrawerLayout() {
         mDrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         mNavigationView = (NavigationView) findViewById(R.id.navigation_view);
@@ -406,6 +422,24 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
+    private void initPopup() {
+        mMarkerPopup = findViewById(R.id.marker_popup);
+        mPopupThumb = (ImageView) findViewById(R.id.popup_thumbnail);
+        mPopupCount = (TextView) findViewById(R.id.popup_count);
+        mPopupTitle = (TextView) findViewById(R.id.popup_title);
+        mPopupDirections = (ImageView) findViewById(R.id.popup_directions);
+
+        //mMarkerPopup.animate().translationY(300.0f).alpha(0.0f);
+        mIsPopupVisible = false;
+        mPopupDirections.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // TODO
+                Utils.showToast(MainActivity.this, "Do you need directions?");
+            }
+        });
+    }
+
     private void displayInitialFragment() {
         mCurrentTitle = getString(R.string.menu_title_home);
         setTitle(mCurrentTitle);
@@ -416,6 +450,7 @@ public class MainActivity extends AppCompatActivity implements
                 .commit();
     }
 
+    // camera and api 24 permissions
     private boolean iFirstTimeIn() {
         // if no result saved, first time app launched
         boolean firstTimeIn = mPrefs.getBoolean(IS_FIRST_TIME_IN, true);
@@ -494,6 +529,19 @@ public class MainActivity extends AppCompatActivity implements
         return uriPath.toString().substring(position);
     }
 
+    // map/marker helper methods
+    private void animatePopupUp() {
 
+    }
+
+    private void animatePopupDown() {
+
+    }
+
+    private void populatePopup(Marker marker, int totalCount) {
+        mPopupCount.setText(String.format(Locale.ENGLISH, "Image %d/%d", Math.round(marker.getZIndex()), totalCount));
+        mPopupTitle.setText(marker.getTitle());
+        Utils.loadThumbnailWithGlide(this, marker.getSnippet(), mPopupThumb);
+    }
 
 }

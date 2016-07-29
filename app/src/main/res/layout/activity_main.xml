@@ -55,6 +55,7 @@
 
         </android.support.design.widget.AppBarLayout>
 
+        <include layout="@layout/marker_popup"/>
 
         <!-- fab -->
         <android.support.design.widget.FloatingActionButton

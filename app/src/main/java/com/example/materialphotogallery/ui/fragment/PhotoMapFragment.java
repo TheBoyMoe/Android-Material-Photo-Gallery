@@ -34,7 +34,7 @@ public class PhotoMapFragment extends ContractMapFragment<PhotoMapFragment.Contr
         GoogleMap.OnMapClickListener{
 
     public interface Contract {
-        void onMarkerClick();
+        void onMarkerClick(Marker marker, int totalCount);
         void onMapClick();
     }
 
@@ -85,14 +85,13 @@ public class PhotoMapFragment extends ContractMapFragment<PhotoMapFragment.Contr
 
     @Override
     public boolean onMarkerClick(Marker marker) {
-        // TODO
-        getContract().onMarkerClick();
+        getContract().onMarkerClick(marker, mList.size());
         return true;
     }
 
     private void addMarkers(GoogleMap map) {
 
-        Marker marker = null;
+        Marker marker;
         for (int i = 0; i < mList.size(); i++) {
             PhotoItem item = mList.get(i);
             if (item.getLatitude() == 0.0 && item.getLongitude() == 0.0) {
@@ -100,8 +99,9 @@ public class PhotoMapFragment extends ContractMapFragment<PhotoMapFragment.Contr
             }
             marker = map.addMarker(new MarkerOptions()
                     .position(new LatLng(item.getLatitude(), item.getLongitude()))
-                    .title(String.format(Locale.ENGLISH, "%d/%d %s",
-                            i + 1, mList.size(), item.getTitle()) )
+                    .title(String.format(Locale.ENGLISH, "%s", item.getTitle()))
+                    .snippet(item.getSmallThumbPath())
+                    .zIndex(i)
                     .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_marker))
             );
             // add each marker to the LatLng object
