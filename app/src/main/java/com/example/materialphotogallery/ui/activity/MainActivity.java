@@ -77,14 +77,18 @@ public class MainActivity extends AppCompatActivity implements
     // - map fragment
     @Override
     public void onMarkerClick(Marker marker, int totalCount) {
+        // set marker image, title and animate popup into view
         populatePopup(marker, totalCount);
-
-        // TODO animate popup up
+        if (!mIsPopupVisible) {
+            mIsPopupVisible = true;
+            animatePopupIntoView(mMarkerPopup);
+        }
     }
 
     @Override
     public void onMapClick() {
-        // TODO animate popup down
+        // animate popup out of view
+        hidePopup();
 
     }
     // END
@@ -220,6 +224,9 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onBackPressed() {
+        // hide marker popup if visible
+        hidePopup();
+
         // update the page title
         FragmentManager fm = getSupportFragmentManager();
         int count = fm.getBackStackEntryCount();
@@ -304,6 +311,9 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     private void selectDrawerItem(MenuItem item) {
+        // hide marker popup if visible
+        hidePopup();
+
         // select the fragment to instantiate based on the item clicked
         Fragment fragment = null;
         String tag;
@@ -429,7 +439,7 @@ public class MainActivity extends AppCompatActivity implements
         mPopupTitle = (TextView) findViewById(R.id.popup_title);
         mPopupDirections = (ImageView) findViewById(R.id.popup_directions);
 
-        //mMarkerPopup.animate().translationY(300.0f).alpha(0.0f);
+        mMarkerPopup.animate().translationY(300.0f).alpha(0.0f);
         mIsPopupVisible = false;
         mPopupDirections.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -530,18 +540,30 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     // map/marker helper methods
-    private void animatePopupUp() {
-
+    private void animatePopupIntoView(View view) {
+        view.animate()
+                .translationY(0.0f)
+                .alpha(1.0f);
     }
 
-    private void animatePopupDown() {
-
+    private void animatePopupOutOfView(View view) {
+        view.animate()
+                .translationY(300.0f)
+                .setDuration(1200)
+                .alpha(0.0f);
     }
 
     private void populatePopup(Marker marker, int totalCount) {
         mPopupCount.setText(String.format(Locale.ENGLISH, "Image %d/%d", Math.round(marker.getZIndex()), totalCount));
         mPopupTitle.setText(marker.getTitle());
         Utils.loadThumbnailWithGlide(this, marker.getSnippet(), mPopupThumb);
+    }
+
+    private void hidePopup() {
+        if (mIsPopupVisible) {
+            mIsPopupVisible = false;
+            animatePopupOutOfView(mMarkerPopup);
+        }
     }
 
 }
