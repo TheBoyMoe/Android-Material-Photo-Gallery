@@ -86,8 +86,6 @@ public class PhotoMapFragment extends SupportMapFragment implements
         Marker marker = null;
         for (int i = 0; i < mList.size(); i++) {
             PhotoItem item = mList.get(i);
-            Timber.i("%s: id: %d, lat: %s, lng: %s",
-                    Constants.LOG_TAG, item.getId(), item.getLatitude(), item.getLongitude());
             if (item.getLatitude() == 0.0 && item.getLongitude() == 0.0) {
                 continue;
             }

@@ -58,6 +58,7 @@ public class MainActivity extends AppCompatActivity implements
         HomeFragment.Contract,
         FavouriteFragment.Contract {
 
+
     // Contract methods
     @Override
     public void onHomeItemClick(List<PhotoItem> list, int position) {
@@ -87,8 +88,9 @@ public class MainActivity extends AppCompatActivity implements
 
     private static final String CURRENT_PAGE_TITLE = "current_page_title";
     private static final String FULL_SIZE_PHOTO_PATH = "full_size_photo_path";
-    private static final String PHOTO_PREVIEW_EXT = "_preview.jpg";
-    private static final String PHOTO_THUMB_EXT = "_thumb.jpg";
+    private static final String FAB_VISIBILITY = "fab_visibility";
+    //private static final String PHOTO_PREVIEW_EXT = "_preview.jpg";
+    //private static final String PHOTO_THUMB_EXT = "_thumb.jpg";
 
     private static final int PHOTO_REQUEST_CODE = 100;
     private static final int PERMISSIONS_REQUEST_CODE = 101;
@@ -100,6 +102,8 @@ public class MainActivity extends AppCompatActivity implements
     private NavigationView mNavigationView;
     private String mCurrentTitle;
     private String mFullSizePhotoPath;
+    private FloatingActionButton mFab;
+    private boolean mIsFabVisible = true;
 
 
     @Override
@@ -117,6 +121,10 @@ public class MainActivity extends AppCompatActivity implements
         if (savedInstanceState == null) {
             displayInitialFragment();
         } else {
+            mIsFabVisible = savedInstanceState.getBoolean(FAB_VISIBILITY);
+            if (!mIsFabVisible) {
+                mFab.setVisibility(View.GONE);
+            }
             mFullSizePhotoPath = savedInstanceState.getString(FULL_SIZE_PHOTO_PATH);
             mIsInPermission = savedInstanceState.getBoolean(PERMISSIONS_TRACK_STATE);
             mCurrentTitle = savedInstanceState.getString(CURRENT_PAGE_TITLE);
@@ -180,6 +188,7 @@ public class MainActivity extends AppCompatActivity implements
         outState.putString(CURRENT_PAGE_TITLE, mCurrentTitle);
         outState.putString(FULL_SIZE_PHOTO_PATH, mFullSizePhotoPath);
         outState.putBoolean(PERMISSIONS_TRACK_STATE, mIsInPermission);
+        outState.putBoolean(FAB_VISIBILITY, mIsFabVisible);
     }
 
     @Override
@@ -199,6 +208,8 @@ public class MainActivity extends AppCompatActivity implements
         switch (mCurrentTitle) {
             case "Photo Gallery":
                 mNavigationView.setCheckedItem(R.id.drawer_home);
+                mFab.setVisibility(View.VISIBLE);
+                mIsFabVisible = true;
                 break;
             case "Favourites":
                 mNavigationView.setCheckedItem(R.id.drawer_favourite);
@@ -213,6 +224,7 @@ public class MainActivity extends AppCompatActivity implements
                 mNavigationView.setCheckedItem(R.id.drawer_about);
                 break;
         }
+
     }
 
     @Override
@@ -266,7 +278,7 @@ public class MainActivity extends AppCompatActivity implements
     private void selectDrawerItem(MenuItem item) {
         // select the fragment to instantiate based on the item clicked
         Fragment fragment = null;
-        String tag = null;
+        String tag;
         Class fragmentClass;
         switch (item.getItemId()) {
             case R.id.drawer_home:
@@ -299,7 +311,6 @@ public class MainActivity extends AppCompatActivity implements
                 tag = HOME_FRAGMENT;
         }
         try {
-            // TODO pass in array of photo items into
             fragment = (Fragment) fragmentClass.newInstance();
         } catch (Exception e) {
             Timber.e("%s: Could not instantiate %s fragment, %s",
@@ -341,14 +352,24 @@ public class MainActivity extends AppCompatActivity implements
                 .addToBackStack(mCurrentTitle)
                 .commit();
 
+        // hide fab
+        if (fragmentClass != HomeFragment.class) {
+            mFab.setVisibility(View.GONE);
+            mIsFabVisible = false;
+        }
+        else {
+            mFab.setVisibility(View.VISIBLE);
+            mIsFabVisible = true;
+        }
+
         setTitle(mCurrentTitle);
         mDrawer.closeDrawers();
     }
 
     private void initFab() {
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        if (fab != null) {
-            fab.setOnClickListener(new View.OnClickListener() {
+        mFab = (FloatingActionButton) findViewById(R.id.fab);
+        if (mFab != null) {
+            mFab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     if (Utils.hasCamera(MainActivity.this)) {
