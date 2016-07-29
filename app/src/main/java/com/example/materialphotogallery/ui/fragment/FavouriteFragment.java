@@ -15,7 +15,7 @@ import com.example.materialphotogallery.common.ContractFragment;
 public class FavouriteFragment extends ContractFragment<FavouriteFragment.Contract>{
 
     public interface Contract {
-        // TODO
+        // no-op
     }
 
     public FavouriteFragment(){}

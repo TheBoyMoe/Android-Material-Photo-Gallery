@@ -524,7 +524,6 @@ public class MainActivity extends AppCompatActivity implements
 
     private void showRationalMessage(String message) {
         //  add action to the snackbar allowing user to amend permissions in app's settings
-        //Utils.showSnackbar(mLayout, message); // FIXME
         Snackbar snackbar = Snackbar
                 .make(mLayout, message, Snackbar.LENGTH_LONG)
                 .setAction(R.string.snackbar_action_title, new View.OnClickListener() {

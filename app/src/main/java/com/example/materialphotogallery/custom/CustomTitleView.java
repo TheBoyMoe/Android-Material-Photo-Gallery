@@ -6,8 +6,9 @@ import android.widget.TextView;
 
 public class CustomTitleView extends TextView{
 
-
     public CustomTitleView(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
+
+
 }
