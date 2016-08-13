@@ -17,6 +17,6 @@
     <string name="dialog_positive_btn_text">Submit</string>
     <string name="dialog_negative_btn_text">Cancel</string>
     <string name="maps_not_supported">Google Map not available</string>
-    <string name="google_map_api_key">xxxx-xxxxx-xxxx-xxxx-xxxx</string>
+    <string name="google_map_api_key">xxxx-xxxx-xxxxx-xxxxx-xxxxx</string>
 
 </resources>
