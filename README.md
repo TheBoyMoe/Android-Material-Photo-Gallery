@@ -12,6 +12,7 @@ The app was a learning exercise in the implementation of the following:
 - Phone layout using activities/fragments
 - activity/fragment communication via interfaces
 - RecyclerView implementing Multi Choice Mode
+- Android 6 Permissions
 - EventBus 
 - DialogFragment
 - Navigation Drawer

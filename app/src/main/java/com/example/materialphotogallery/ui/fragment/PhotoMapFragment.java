@@ -151,6 +151,7 @@ public class PhotoMapFragment extends ContractMapFragment<PhotoMapFragment.Contr
             mMapView.post( new Runnable() {
                 @Override
                 public void run() {
+                    // FIXME illegal State Exception if no images with gps coords found
                     CameraUpdate locations = CameraUpdateFactory.newLatLngBounds(mBuilder.build(), 128);
                     mMap.moveCamera(locations);
                 }
