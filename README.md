@@ -7,6 +7,17 @@ Google Map fragment. All image data is saved to a SQLite database, the images to
 recycler view also incorporates Multi Choice mode, allowing the selected images to be either deleted
  or marked as favourites. Currently the favourite fragment is not implemented.
 
+The app was a learning exercise in the implementation of the following:
+- SQLite database
+- Phone layout using activities/fragments
+- activity/fragment communication via interfaces
+- RecyclerView implementing Multi Choice Mode
+- EventBus 
+- DialogFragment
+- Navigation Drawer
+- Background Threading
+- Google Play Services
+- Google Maps (Requires logging on to the Google Console creating an App and obtaining an API key)
 
 Pre-requisites
 --------------
@@ -19,11 +30,10 @@ Getting Started
 This sample uses the Gradle build system. To build this project, use the
 "gradlew build" command or use "Import Project" in Android Studio.
 
-Screenshots
------------
+Screencasts
+------------
 
-![Phone](screenshots/note-it-app-preview-1.gif "Interacting with the app, add a text note")
-![Phone](screenshots/note-it-app-preview-2.gif "Interacting with the app, delete a number o notes simultaneously")
+![Phone](screencasts/phone-opening-sequence.gif "Interacting with the app on a phone") ![Phone](screencasts/phone-add-photo-sequence.gif "Interacting with the app, take and add a photo to the gallery")
 
 Credit
 ------
